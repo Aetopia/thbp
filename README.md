@@ -9,14 +9,12 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 > - This list shows games that are confirmed to work.
 > - Feel free to test it with other games & report back!
 
-- Touhou 10
-- Touhou 12
+<div align='center'>
 
-## Showcase
-
-<div align="center">
-
-[![](https://img.youtube.com/vi/19nlS8QVjpo/maxresdefault.jpg)](https://youtu.be/19nlS8QVjpo)
+|Game|Preview|
+|:-:|:-:|
+|Touhou 10|<img width="320" height="180" src="img/th10.gif"/>|
+|Touhou 12|<img width="320" height="180" src="img/th12.gif"/>|
 
 </div>
 
