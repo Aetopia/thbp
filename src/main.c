@@ -1,6 +1,7 @@
 #include "d3d9.c"
-#include "dinput.c"
 #include <dwmapi.h>
+#include <dinput.h>
+#include <dinputd.h>
 #include <shlwapi.h>
 
 PVOID CDECL __wrap_memcpy(PVOID dst, PVOID src, SIZE_T count)
@@ -13,6 +14,21 @@ PVOID CDECL __wrap_memset(PVOID dst, BYTE data, SIZE_T count)
 {
     __stosb(dst, data, count);
     return dst;
+}
+
+HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
+HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, LPCVOID, PVOID, PVOID) = {};
+
+HRESULT WINAPI SetCooperativeLevel(PVOID this, HWND wnd, DWORD flags)
+{
+    flags &= ~DISCL_NOWINKEY;
+    return g_SetCooperativeLevel(this, wnd, flags);
+}
+
+__declspec(dllexport) HRESULT WINAPI DirectInput8Create(HINSTANCE instance, DWORD version, REFIID iid, LPVOID *object,
+                                                        LPUNKNOWN unknown)
+{
+    return g_DirectInput8Create(instance, version, iid, object, unknown);
 }
 
 BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
