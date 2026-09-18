@@ -2,7 +2,6 @@
 #include "wnd.c"
 #include <d3d9.h>
 #include <MinHook.h>
-#include <stdatomic.h>
 
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
@@ -28,7 +27,7 @@ HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
-    static atomic_flag s_flag = {};
+    static BOOL s_flag = {};
 
     D3DPRESENT_PARAMETERS d3dpp = *params;
     DWORD style = d3dpp.Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
@@ -45,8 +44,10 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
     flags |= D3DCREATE_NOWINDOWCHANGES;
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
 
-    if (SUCCEEDED(hr) && !atomic_flag_test_and_set(&s_flag))
+    if (SUCCEEDED(hr) && !s_flag)
     {
+        s_flag = TRUE;
+
         MH_CreateHook((*device)->lpVtbl->Reset, Reset, (PVOID)&g_Reset);
         MH_CreateHook((*device)->lpVtbl->Present, Present, (PVOID)&g_Present);
 
