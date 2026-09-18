@@ -31,7 +31,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
     D3DPRESENT_PARAMETERS d3dpp = *params;
     DWORD style = d3dpp.Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
-    WNDPROC procedure = d3dpp.Windowed ? WindowedWndProc : FullScreenWndProc;
 
     if (IsWindowVisible(wnd))
         style |= WS_VISIBLE;
@@ -63,7 +62,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         }));
 
         g_Wnd = CreateWindowExW(WS_EX_LEFT, atom, NULL, WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
-        g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)procedure);
+        g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
 
         SetWindowLongW(wnd, GWL_STYLE, style);
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
