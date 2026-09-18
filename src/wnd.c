@@ -49,22 +49,31 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 LRESULT WINAPI FullScreenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    static BOOL s_flag = {};
+
     switch (uMsg)
     {
-    case WM_DISPLAYCHANGE:
-    case WM_WINDOWPOSCHANGED: {
-        MONITORINFO mi = {.cbSize = sizeof(MONITORINFO)};
-        GetMonitorInfoW(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
+    case WM_WINDOWPOSCHANGED:
+        if (!s_flag)
+        {
+            s_flag = TRUE;
 
-        INT x = mi.rcMonitor.left;
-        INT y = mi.rcMonitor.top;
+            MONITORINFO mi = {.cbSize = sizeof(MONITORINFO)};
+            GetMonitorInfoW(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
 
-        INT cx = mi.rcMonitor.right - x;
-        INT cy = mi.rcMonitor.bottom - y;
+            INT x = mi.rcMonitor.left;
+            INT y = mi.rcMonitor.top;
 
-        SetWindowPos(hWnd, NULL, x, y, cx, cy, SWP_NOZORDER);
-        break;
+            INT cx = mi.rcMonitor.right - x;
+            INT cy = mi.rcMonitor.bottom - y;
+
+            SetWindowPos(hWnd, NULL, x, y, cx, cy, SWP_NOZORDER);
+
+            s_flag = FALSE;
+            break;
+        }
+        return 0;
     }
-    }
+
     return WindowedWndProc(hWnd, uMsg, wParam, lParam);
 }
