@@ -32,5 +32,5 @@ Adds borderless fullscreen support to Touhou games with aspect ratio preservatio
 - Place `dinput8.dll` in the install directory.
 
 ## Build
-1. Install [CMake](https://cmake.org) & [MinGW (x86)](https://www.mingw-w64.org).
+1. Install [MinGW (x86)](https://www.mingw-w64.org).
 2. Run [`BUILD.cmd`](BUILD.cmd) to build the project.

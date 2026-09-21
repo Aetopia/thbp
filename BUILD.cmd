@@ -1,10 +1,18 @@
 @echo off
 
 cd "%~dp0"
-rd /q /s "src/bin"
+cd "src"
 
-set "CC=i686-w64-mingw32-gcc"
-set "CMAKE_GENERATOR=MinGW Makefiles"
+rd /q /s "bin"
+rd /q /s "obj"
 
-cmake.exe -S "." -B "src/obj" --fresh
-cmake.exe --build "src/obj" --clean-first
+md "bin"
+md "obj"
+
+i686-w64-mingw32-windres.exe -i "res.rc" -o "obj\res.o"
+
+i686-w64-mingw32-gcc.exe ^
+-Oz -shared -e "DllMain" ^
+-DUNICODE -DINITGUID -DWIN32_LEAN_AND_MEAN -DWINVER=NTDDI_WIN10 ^
+-Wl,--kill-at,--gc-sections,--exclude-all-symbols -Wno-dll-attribute-on-redeclaration ^
+"main.c" "obj\res.o" -lkernel32 -luser32 -lgdi32 -ld3d9 -lshlwapi -ldwmapi -o "bin/dinput8.dll"
