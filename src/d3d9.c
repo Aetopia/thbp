@@ -1,7 +1,7 @@
 #pragma once
 #include "wnd.c"
+#include "hook.c"
 #include <d3d9.h>
-#include <MinHook.h>
 
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
@@ -45,12 +45,8 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         {
             s_flag = TRUE;
 
-            MH_CreateHook((*device)->lpVtbl->Reset, Reset, (PVOID)&g_Reset);
-            MH_CreateHook((*device)->lpVtbl->Present, Present, (PVOID)&g_Present);
-
-            MH_QueueEnableHook((*device)->lpVtbl->Reset);
-            MH_QueueEnableHook((*device)->lpVtbl->Present);
-            MH_ApplyQueued();
+            g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
+            g_Present = CreateHook((*device)->lpVtbl->Present, Present);
 
             PWSTR atom = MAKEINTATOM(RegisterClassW(&(WNDCLASSW){
                 .lpszClassName = L"PRESENT",

@@ -4,18 +4,6 @@
 #include <dinputd.h>
 #include <shlwapi.h>
 
-PVOID CDECL __wrap_memcpy(PVOID dst, PVOID src, SIZE_T count)
-{
-    __movsb(dst, src, count);
-    return dst;
-}
-
-PVOID CDECL __wrap_memset(PVOID dst, BYTE data, SIZE_T count)
-{
-    __stosb(dst, data, count);
-    return dst;
-}
-
 HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
 HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, LPCVOID, PVOID, PVOID) = {};
 
@@ -52,15 +40,8 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         g_DirectInput8Create(instance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (PVOID)&dinput, NULL);
         dinput->lpVtbl->CreateDevice(dinput, &GUID_SysMouseEm, &device, NULL);
 
-        MH_Initialize();
-
-        MH_CreateHook(d3d9->lpVtbl->CreateDevice, CreateDevice, (PVOID)&g_CreateDevice);
-        MH_CreateHook(device->lpVtbl->SetCooperativeLevel, SetCooperativeLevel, (PVOID)&g_SetCooperativeLevel);
-
-        MH_QueueEnableHook(d3d9->lpVtbl->CreateDevice);
-        MH_QueueEnableHook(device->lpVtbl->SetCooperativeLevel);
-
-        MH_ApplyQueued();
+        g_CreateDevice = CreateHook(d3d9->lpVtbl->CreateDevice, CreateDevice);
+        g_SetCooperativeLevel = CreateHook(device->lpVtbl->SetCooperativeLevel, SetCooperativeLevel);
 
         d3d9->lpVtbl->Release(d3d9);
         device->lpVtbl->Release(device);
