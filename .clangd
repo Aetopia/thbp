@@ -1,6 +1,10 @@
 CompileFlags:
-  CompilationDatabase: "src/obj"
-  Add: ["--target=i686-w64-windows-gnu"]
+  Add: 
+    - '-DUNICODE'
+    - '-DINITGUID'
+    - '-DWIN32_LEAN_AND_MEAN'
+    - '-DWINVER=NTDDI_WIN10'
+    - '--target=i686-w64-windows-gnu'
 
 Diagnostics:
-  Suppress: ["dll-attribute-on-redeclaration"]
+  Suppress: ['dll-attribute-on-redeclaration']
