@@ -29,42 +29,41 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 {
     static BOOL s_flag = {};
 
-    if (params->Windowed)
+    if (!params->Windowed)
+        ExitProcess(EXIT_FAILURE);
+
+    D3DPRESENT_PARAMETERS d3dpp = *params;
+
+    d3dpp.Windowed = TRUE;
+    d3dpp.FullScreen_RefreshRateInHz = 0;
+    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+
+    flags |= D3DCREATE_NOWINDOWCHANGES;
+    HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
+
+    if (SUCCEEDED(hr) && !s_flag)
     {
-        D3DPRESENT_PARAMETERS d3dpp = *params;
+        s_flag = TRUE;
 
-        d3dpp.Windowed = TRUE;
-        d3dpp.FullScreen_RefreshRateInHz = 0;
-        d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-        d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+        g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
+        g_Present = CreateHook((*device)->lpVtbl->Present, Present);
 
-        flags |= D3DCREATE_NOWINDOWCHANGES;
-        HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
+        PWSTR atom = MAKEINTATOM(RegisterClassW(&(WNDCLASSW){
+            .lpszClassName = L"PRESENT",
+            .lpfnWndProc = DefWindowProcW,
+            .hCursor = LoadCursorW(NULL, IDC_ARROW),
+            .hbrBackground = GetStockObject(BLACK_BRUSH),
+        }));
 
-        if (SUCCEEDED(hr) && !s_flag)
-        {
-            s_flag = TRUE;
+        g_Wnd = CreateWindowExW(WS_EX_LEFT, atom, NULL, WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
+        g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
 
-            g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
-            g_Present = CreateHook((*device)->lpVtbl->Present, Present);
+        SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
+        SetWindowLongW(wnd, GWL_STYLE, WS_CLIPCHILDREN | WS_POPUP | (IsWindowVisible(wnd) * WS_VISIBLE));
 
-            PWSTR atom = MAKEINTATOM(RegisterClassW(&(WNDCLASSW){
-                .lpszClassName = L"PRESENT",
-                .lpfnWndProc = DefWindowProcW,
-                .hCursor = LoadCursorW(NULL, IDC_ARROW),
-                .hbrBackground = GetStockObject(BLACK_BRUSH),
-            }));
-
-            g_Wnd = CreateWindowExW(WS_EX_LEFT, atom, NULL, WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
-            g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
-
-            SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
-            SetWindowLongW(wnd, GWL_STYLE, WS_CLIPCHILDREN | WS_POPUP | (IsWindowVisible(wnd) * WS_VISIBLE));
-
-            SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-        }
-        return hr;
+        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
     }
-
-    return E_FAIL;
+    
+    return hr;
 }
