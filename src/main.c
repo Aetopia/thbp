@@ -2,7 +2,6 @@
 #include <dwmapi.h>
 #include <dinput.h>
 #include <dinputd.h>
-#include <shlwapi.h>
 
 HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
 HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, LPCVOID, PVOID, PVOID) = {};
@@ -27,25 +26,24 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
         WCHAR path[MAX_PATH] = {};
-
         GetSystemDirectoryW(path, MAX_PATH);
-        PathCombineW(path, path, L"dinput8.dll");
 
-        g_DirectInput8Create = (PVOID)GetProcAddress(LoadLibraryW(path), "DirectInput8Create");
+        HMODULE module = LoadLibraryW(lstrcatW(path, L"/DINPUT8"));
+        g_DirectInput8Create = (PVOID)GetProcAddress(module, "DirectInput8Create");
 
-        LPDIRECTINPUT8W dinput = {};
+        LPDIRECTINPUT8W dinput8 = {};
         LPDIRECTINPUTDEVICE8W device = {};
         LPDIRECT3D9 d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
-        g_DirectInput8Create(instance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (PVOID)&dinput, NULL);
-        dinput->lpVtbl->CreateDevice(dinput, &GUID_SysMouseEm, &device, NULL);
+        g_DirectInput8Create(instance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (PVOID)&dinput8, NULL);
+        dinput8->lpVtbl->CreateDevice(dinput8, &GUID_SysMouseEm, &device, NULL);
 
         g_CreateDevice = CreateHook(d3d9->lpVtbl->CreateDevice, CreateDevice);
         g_SetCooperativeLevel = CreateHook(device->lpVtbl->SetCooperativeLevel, SetCooperativeLevel);
 
         d3d9->lpVtbl->Release(d3d9);
         device->lpVtbl->Release(device);
-        dinput->lpVtbl->Release(dinput);
+        dinput8->lpVtbl->Release(dinput8);
 
         DwmEnableMMCSS(TRUE);
     }
