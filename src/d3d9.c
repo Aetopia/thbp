@@ -13,7 +13,6 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 
     d3dpp.Windowed = TRUE;
     d3dpp.FullScreen_RefreshRateInHz = 0;
-    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
     return g_Reset(this, &d3dpp);
@@ -36,7 +35,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
     d3dpp.Windowed = TRUE;
     d3dpp.FullScreen_RefreshRateInHz = 0;
-    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
     flags |= D3DCREATE_NOWINDOWCHANGES;
