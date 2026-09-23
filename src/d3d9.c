@@ -7,6 +7,11 @@ HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
 
+HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
+{
+    return g_Present(this, NULL, NULL, g_Wnd, NULL);
+}
+
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
     if (!params->Windowed)
@@ -18,11 +23,6 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
     return g_Reset(this, &d3dpp);
-}
-
-HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
-{
-    return g_Present(this, NULL, NULL, g_Wnd, NULL);
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,

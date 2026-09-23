@@ -23,13 +23,35 @@ Adds borderless fullscreen support to Touhou games with aspect ratio preservatio
 
 > [!CAUTION]
 > The patch promotes windowed mode to borderless fullscreen.
-> - Open the desired game's configuration tool.
+> - Open a supported game's configuration tool.
 > - Select windowed mode & the highest available resolution.
-> - Using fullscreen isn't supported & the patch will refuse to work.
+> 
+> **Using fullscreen isn't supported & the patch will refuse to work.**
 
 - [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of `thbp`.
 - Locate a supported game on your system.
 - Place `dinput8.dll` in the install directory.
+
+## FAQ
+#### Why does the patch require windowed mode?
+The patch intentionally avoids intercepting game functionality.
+- This removes the need to handle game specific edge cases.
+- Additionally makes it compatible with both disk & Steam versions.
+
+The game's fullscreen handling is also "somewhat" fragile on modern systems.
+- Forcing windowed mode ensures a game doesn't "deadlock".
+- Allows the patch to safely promote a game to use borderless fullscreen.
+
+#### Why not use vpatch for "borderless fullscreen"?
+Though vpatch allows one to [run the games at any resolution](https://maribelhearn.com/faq/graphics).
+
+- It requires the user to intervene & configure it, 
+- Additionally you must somewhat compromise on fullscreen.
+
+Additionally, vpatch only works with the disk version of the games.
+- If you want to use it with the Steam version, it must be converted.
+
+This patch solely serves as a plug & play solution for borderless fullscreen.
 
 ## Build
 1. Install [MinGW (x86)](https://www.mingw-w64.org).
