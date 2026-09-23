@@ -25,6 +25,16 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         DisableThreadLibraryCalls(instance);
         SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
+        WNDCLASSW wc = {
+            .lpszClassName = L" ",
+            .lpfnWndProc = DefWindowProcW,
+            .hCursor = LoadCursorW(NULL, IDC_ARROW),
+            .hbrBackground = GetStockObject(BLACK_BRUSH),
+        };
+
+        RegisterClassW(&wc);
+        DwmEnableMMCSS(TRUE);
+
         WCHAR path[MAX_PATH] = {};
         GetSystemDirectoryW(path, MAX_PATH);
 
@@ -44,8 +54,6 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         d3d9->lpVtbl->Release(d3d9);
         device->lpVtbl->Release(device);
         dinput8->lpVtbl->Release(dinput8);
-
-        DwmEnableMMCSS(TRUE);
     }
     return TRUE;
 }

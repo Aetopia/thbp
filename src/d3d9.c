@@ -49,14 +49,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
         g_Present = CreateHook((*device)->lpVtbl->Present, Present);
 
-        PWSTR atom = MAKEINTATOM(RegisterClassW(&(WNDCLASSW){
-            .lpszClassName = L"PRESENT",
-            .lpfnWndProc = DefWindowProcW,
-            .hCursor = LoadCursorW(NULL, IDC_ARROW),
-            .hbrBackground = GetStockObject(BLACK_BRUSH),
-        }));
-
-        g_Wnd = CreateWindowExW(WS_EX_LEFT, atom, NULL, WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
+        g_Wnd = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
         g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
 
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
