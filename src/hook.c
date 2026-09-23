@@ -2,7 +2,7 @@
 #include <memoryapi.h>
 #include <processthreadsapi.h>
 
-PVOID CreateHook(PVOID target, PVOID detour)
+PVOID CreateHook(PVOID src, PVOID dst)
 {
     struct __attribute__((packed))
     {
@@ -10,20 +10,20 @@ PVOID CreateHook(PVOID target, PVOID detour)
         PVOID addr;
     } jmp = {.code = 0xE9};
 
-    PVOID og = VirtualAlloc(NULL, sizeof jmp * 2, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-    jmp.addr = (PVOID)((target + sizeof jmp) - (og + sizeof jmp * 2));
+    PVOID ptr = VirtualAlloc(NULL, sizeof jmp * 2, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    jmp.addr = (PVOID)((src + sizeof jmp) - (ptr + sizeof jmp * 2));
 
-    __movsb(og, target, sizeof jmp);
-    __movsb(og + sizeof jmp, (PVOID)&jmp, sizeof jmp);
+    __movsb(ptr, src, sizeof jmp);
+    __movsb(ptr + sizeof jmp, (PVOID)&jmp, sizeof jmp);
 
     DWORD flags = {};
-    VirtualProtect(target, sizeof jmp, PAGE_EXECUTE_READWRITE, &flags);
+    VirtualProtect(src, sizeof jmp, PAGE_EXECUTE_READWRITE, &flags);
 
-    jmp.addr = (PVOID)(detour - (target + sizeof jmp));
-    __movsb(target, (PVOID)&jmp, sizeof jmp);
+    jmp.addr = (PVOID)(dst - (src + sizeof jmp));
+    __movsb(src, (PVOID)&jmp, sizeof jmp);
 
-    VirtualProtect(target, sizeof jmp, flags, &(DWORD){});
-    FlushInstructionCache(GetCurrentProcess(), target, sizeof jmp);
+    VirtualProtect(src, sizeof jmp, flags, &(DWORD){});
+    FlushInstructionCache(GetCurrentProcess(), src, sizeof jmp);
 
-    return og;
+    return ptr;
 }

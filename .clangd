@@ -2,8 +2,8 @@ CompileFlags:
   Add: 
     - '-DUNICODE'
     - '-DINITGUID'
-    - '-DWIN32_LEAN_AND_MEAN'
     - '-DWINVER=NTDDI_WIN10'
+    - '-DWIN32_LEAN_AND_MEAN'
     - '--target=i686-w64-windows-gnu'
 
 Diagnostics:
