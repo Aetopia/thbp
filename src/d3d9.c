@@ -18,9 +18,7 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
         ExitProcess(EXIT_FAILURE);
 
     D3DPRESENT_PARAMETERS d3dpp = *params;
-
-    d3dpp.FullScreen_RefreshRateInHz = 0;
-    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
     return g_Reset(this, &d3dpp);
 }
@@ -34,9 +32,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         ExitProcess(EXIT_FAILURE);
 
     D3DPRESENT_PARAMETERS d3dpp = *params;
-
-    d3dpp.FullScreen_RefreshRateInHz = 0;
-    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
     flags |= D3DCREATE_NOWINDOWCHANGES;
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
