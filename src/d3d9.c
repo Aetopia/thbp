@@ -14,13 +14,8 @@ HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
-    if (!params->Windowed)
-        ExitProcess(EXIT_FAILURE);
-
-    D3DPRESENT_PARAMETERS d3dpp = *params;
-    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
-    return g_Reset(this, &d3dpp);
+    params->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    return params->Windowed ? g_Reset(this, params) : E_FAIL;
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
@@ -28,14 +23,9 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 {
     static BOOL s_flag = {};
 
-    if (!params->Windowed)
-        ExitProcess(EXIT_FAILURE);
-
-    D3DPRESENT_PARAMETERS d3dpp = *params;
-    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
     flags |= D3DCREATE_NOWINDOWCHANGES;
-    HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
+    params->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    HRESULT hr = params->Windowed ? g_CreateDevice(this, adapter, type, wnd, flags, params, device) : E_FAIL;
 
     if (SUCCEEDED(hr) && !s_flag)
     {
