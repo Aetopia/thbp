@@ -33,22 +33,19 @@ Adds borderless fullscreen support to Touhou games with aspect ratio preservatio
 
 ## FAQ
 #### Why does the patch require windowed mode?
-The patch intentionally avoids intercepting game functionality.
-- This removes the need to handle game specific edge cases.
-- Additionally makes it compatible with both disk & Steam versions.
+The patch avoids intercepting any game functionality.
+- Makes it compatible with the Disk & Steam versions.
+- Removes the need to handle game specific edge cases.
 
-The game's fullscreen handling is also "somewhat" fragile on modern systems.
-- Forcing windowed mode ensures a game doesn't "deadlock".
-- Allows the patch to safely promote a game to use borderless fullscreen.
+Enforcing windowed mode allows the patch to safely promote borderless fullscreen.
+- Depending on the game, fullscreen might disengage critical features.
+- For example, a game might rely on V-Sync instead of its framerate limiter.
 
 #### Why not use vpatch for "borderless fullscreen"?
 Though vpatch allows one to [run the games at any resolution](https://maribelhearn.com/faq/graphics).
 
 - It requires the user to intervene & configure it, 
 - Additionally you must somewhat compromise on fullscreen.
-
-Additionally, vpatch only works with the disk version of the games.
-- If you want to use it with the Steam version, it must be converted.
 
 This patch solely serves as a plug & play solution for borderless fullscreen.
 
