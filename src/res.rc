@@ -1,13 +1,13 @@
 #include <winver.h>
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 3, 2, 2, 0
+FILEVERSION 3, 2, 3, 0
 {
     BLOCK "StringFileInfo"
     {
         BLOCK "000004B0"
         {
             VALUE "CompanyName", "Aetopia"
-            VALUE "ProductVersion", "3.2.2.0"
+            VALUE "ProductVersion", "3.2.3.0"
             VALUE "ProductName", "Touhou Borderless Patch"
             VALUE "FileDescription", "Touhou Borderless Patch"
             VALUE "LegalCopyright", "https://github.com/Aetopia/thbp"
