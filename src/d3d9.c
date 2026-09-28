@@ -4,7 +4,18 @@
 #include <d3d9.h>
 
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
+HRESULT WINAPI (*g_GetAdapterDisplayMode)(PVOID, UINT, PVOID) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
+
+HRESULT WINAPI GetAdapterDisplayMode(PVOID this, UINT adapter, D3DDISPLAYMODE *mode)
+{
+    HRESULT hr = g_GetAdapterDisplayMode(this, adapter, mode);
+
+    if (SUCCEEDED(hr))
+        *mode = (D3DDISPLAYMODE){};
+
+    return hr;
+}
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
@@ -12,12 +23,8 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 
     if (d3dpp.Windowed)
     {
-        d3dpp.Windowed = TRUE;
-        d3dpp.FullScreen_RefreshRateInHz = 0;
-
         d3dpp.hDeviceWindow = g_Wnd;
         d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
         return g_Reset(this, &d3dpp);
     }
 
@@ -43,9 +50,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
             SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
         }
-
-        d3dpp.Windowed = TRUE;
-        d3dpp.FullScreen_RefreshRateInHz = 0;
 
         d3dpp.hDeviceWindow = g_Wnd;
         d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
