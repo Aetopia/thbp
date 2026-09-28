@@ -21,7 +21,7 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
         return g_Reset(this, &d3dpp);
     }
 
-    return E_FAIL;
+    return D3DERR_NOTAVAILABLE;
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
@@ -59,5 +59,5 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         return hr;
     }
 
-    return E_FAIL;
+    return D3DERR_NOTAVAILABLE;
 }
