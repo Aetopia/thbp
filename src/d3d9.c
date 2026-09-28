@@ -12,7 +12,7 @@ HRESULT WINAPI GetAdapterDisplayMode(PVOID this, UINT adapter, D3DDISPLAYMODE *m
     HRESULT hr = g_GetAdapterDisplayMode(this, adapter, mode);
 
     if (SUCCEEDED(hr))
-        *mode = (D3DDISPLAYMODE){};
+        mode->RefreshRate = 0;
 
     return hr;
 }
