@@ -4,7 +4,7 @@
 
 PVOID CreateHook(PVOID src, PVOID dst)
 {
-    struct __attribute__((packed))
+    struct __attribute((packed))
     {
         BYTE code;
         PVOID addr;

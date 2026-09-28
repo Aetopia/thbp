@@ -19,24 +19,15 @@ HRESULT WINAPI GetAdapterDisplayMode(PVOID this, UINT adapter, D3DDISPLAYMODE *m
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
-    D3DPRESENT_PARAMETERS d3dpp = *params;
-
-    if (d3dpp.Windowed)
-    {
-        d3dpp.hDeviceWindow = g_Wnd;
-        d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-        return g_Reset(this, &d3dpp);
-    }
-
-    return D3DERR_NOTAVAILABLE;
+    params->hDeviceWindow = g_Wnd;
+    params->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    return params->Windowed ? g_Reset(this, params) : D3DERR_NOTAVAILABLE;
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
-    D3DPRESENT_PARAMETERS d3dpp = *params;
-
-    if (d3dpp.Windowed)
+    if (params->Windowed)
     {
         if (!g_Wnd)
             g_Wnd = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
@@ -51,17 +42,16 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
             SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
         }
 
-        d3dpp.hDeviceWindow = g_Wnd;
-        d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+        params->hDeviceWindow = g_Wnd;
+        params->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
         flags |= D3DCREATE_NOWINDOWCHANGES;
-        HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
+        HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, params, device);
 
         if (SUCCEEDED(hr) && !g_Reset)
             g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
 
         return hr;
     }
-
     return D3DERR_NOTAVAILABLE;
 }
