@@ -52,7 +52,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
         if (!g_WndProc)
         {
-            g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
+            g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)FullScreenWndProc);
 
             SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
             SetWindowLongW(wnd, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | (IsWindowVisible(wnd) * WS_VISIBLE));
