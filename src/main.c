@@ -1,4 +1,5 @@
 #include "d3d9.c"
+#include <mfapi.h>
 #include <dwmapi.h>
 #include <dinput.h>
 #include <dinputd.h>
@@ -34,6 +35,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
 
         RegisterClassW(&wc);
         DwmEnableMMCSS(TRUE);
+
+        QueryPerformanceFrequency(&g_Frequency);
+        g_Frequency.QuadPart = MFllMulDiv(g_Frequency.QuadPart, 1, 60, 0);
 
         WCHAR path[MAX_PATH] = {};
         GetSystemDirectoryW(path, MAX_PATH);

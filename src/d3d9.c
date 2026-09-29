@@ -3,8 +3,11 @@
 #include "hook.c"
 #include <d3d9.h>
 
-HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_GetAdapterDisplayMode)(PVOID, UINT, PVOID) = {};
+
+LARGE_INTEGER g_Frequency = {};
+HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
+HRESULT WINAPI (*g_Present)(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
 
 HRESULT WINAPI GetAdapterDisplayMode(PVOID this, UINT adapter, D3DDISPLAYMODE *mode)
@@ -15,6 +18,21 @@ HRESULT WINAPI GetAdapterDisplayMode(PVOID this, UINT adapter, D3DDISPLAYMODE *m
         mode->RefreshRate = 0;
 
     return hr;
+}
+
+HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
+{
+    static LARGE_INTEGER s_count = {};
+
+    LARGE_INTEGER count = {};
+    do
+    {
+        YieldProcessor();
+        QueryPerformanceCounter(&count);
+    } while ((count.QuadPart - s_count.QuadPart) < g_Frequency.QuadPart);
+
+    s_count = count;
+    return g_Present(this, src, dst, wnd, rgn);
 }
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
@@ -48,8 +66,14 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         flags |= D3DCREATE_NOWINDOWCHANGES;
         HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, params, device);
 
-        if (SUCCEEDED(hr) && !g_Reset)
-            g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
+        if (SUCCEEDED(hr))
+        {
+            if (!g_Reset)
+                g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
+
+            if (!g_Present)
+                g_Present = CreateHook((*device)->lpVtbl->Present, Present);
+        }
 
         return hr;
     }

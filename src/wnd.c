@@ -55,6 +55,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         return 0;
     }
-    
+
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
 }
