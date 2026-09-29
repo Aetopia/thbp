@@ -3,22 +3,10 @@
 #include "hook.c"
 #include <d3d9.h>
 
-HRESULT WINAPI (*g_GetAdapterDisplayMode)(PVOID, UINT, PVOID) = {};
-
 LARGE_INTEGER g_Frequency = {};
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
-
-HRESULT WINAPI GetAdapterDisplayMode(PVOID this, UINT adapter, D3DDISPLAYMODE *mode)
-{
-    HRESULT hr = g_GetAdapterDisplayMode(this, adapter, mode);
-
-    if (SUCCEEDED(hr))
-        mode->RefreshRate = 0;
-
-    return hr;
-}
 
 HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {

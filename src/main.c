@@ -54,7 +54,6 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
 
         g_CreateDevice = CreateHook(d3d9->lpVtbl->CreateDevice, CreateDevice);
         g_SetCooperativeLevel = CreateHook(device->lpVtbl->SetCooperativeLevel, SetCooperativeLevel);
-        g_GetAdapterDisplayMode = CreateHook(d3d9->lpVtbl->GetAdapterDisplayMode, GetAdapterDisplayMode);
 
         d3d9->lpVtbl->Release(d3d9);
         device->lpVtbl->Release(device);
