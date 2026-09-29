@@ -1,6 +1,6 @@
 # Touhou Borderless Patch
 
-Adds borderless fullscreen support to Touhou games with aspect ratio preservation.
+Adds resizable window & borderless fullscreen support to Touhou games with aspect ratio preservation.
 
 ## Games
 
@@ -9,9 +9,15 @@ Adds borderless fullscreen support to Touhou games with aspect ratio preservatio
 > - This list shows games that are confirmed to work.
 > - Feel free to test it with other games & report back!
 
-- [Touhou 10](img/th10.gif)
-- [Touhou 12](img/th12.gif)
-- [Touhou 15](img/th15.gif)
+- Touhou 10
+- Touhou 12
+- Touhou 15
+
+<div align="center">
+
+[![](https://img.youtube.com/vi/19nlS8QVjpo/maxresdefault.jpg)](https://youtu.be/19nlS8QVjpo)
+
+</div>
 
 ### Tweaks
 
@@ -20,26 +26,25 @@ Adds borderless fullscreen support to Touhou games with aspect ratio preservatio
 
 ## Usage
 
-> [!CAUTION]
-> The patch promotes windowed mode to borderless fullscreen.
-> - Open a supported game's configuration tool.
-> - Select windowed mode & the highest available resolution.
-> 
-> **Using fullscreen isn't supported & the patch will refuse to work.**
+> [!TIP]
+> The patch will promote each screen mode as follows:
+> - Windowed → Resizable Window
+> - Fullscreen → Borderless Fullscreen
+>
+> Use the highest available resolution when playing.
 
 - [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of `thbp`.
 - Locate a supported game on your system.
 - Place `dinput8.dll` in the install directory.
 
 ## FAQ
-#### Why does the patch require windowed mode?
-The patch avoids intercepting any game functionality.
-- Makes it compatible with the Disk & Steam versions.
-- Removes the need to handle game specific edge cases.
+#### Why do my games have high CPU usage?
+The patch asserts its own framerate limiter when active.
 
-Enforcing windowed mode allows the patch to safely promote borderless fullscreen.
-- Depending on the game, fullscreen might disengage critical features.
-- For example, a game might rely on V-Sync instead of its framerate limiter.
+- A game might disengage its framerate limiter.
+- A busy-wait framerate limiter is used for accuracy.
+
+This ensures the games run at 60 FPS regardless of screen mode.
 
 #### Why not use vpatch for "borderless fullscreen"?
 Though vpatch allows one to [run the games at any resolution](https://maribelhearn.com/faq/graphics).
