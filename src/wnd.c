@@ -11,7 +11,9 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 {
     switch (uMsg)
     {
-    case WM_SIZE:
+    case WM_SIZE: {
+        return 0;
+    }
     case WM_SETCURSOR: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
