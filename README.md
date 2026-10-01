@@ -20,16 +20,19 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 </div>
 
 ### Tweaks
-
-- The game has Desktop Window Manager opt in for [MMCSS scheduling](https://github.com/djdallmann/GamingPCSetup/blob/master/CONTENT/RESEARCH/WINSERVICES/README.md#q-can-you-take-advantage-of-the-mmcss-boosted-csrss-and-dwm-thread-priorities-dwmenablemmcss-while-using-a-fullscreen-exclusive-application).
-- The game will no longer [block the Windows key](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee417921(v=vs.85)) when DirectInput is being used.
+- A spin-wait framerate limiter is asserted to ensure 60 FPS.
+- [High DPI Awareness is enabled](https://learn.microsoft.com/windows/win32/hidpi/high-dpi-desktop-application-development-on-windows) to avoid bitmap stretching.
+- Desktop Window Manager opts in for [MMCSS scheduling](https://github.com/djdallmann/GamingPCSetup/blob/master/CONTENT/RESEARCH/WINSERVICES/README.md#q-can-you-take-advantage-of-the-mmcss-boosted-csrss-and-dwm-thread-priorities-dwmenablemmcss-while-using-a-fullscreen-exclusive-application).
+- DirectInput no longer [blocks the Windows key](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee417921(v=vs.85)) when in use.
 
 ## Usage
 
 > [!TIP]
-> The patch will promote each screen mode as follows:
-> - Windowed → Resizable Window
-> - Fullscreen → Borderless Fullscreen
+> The patch will promote screen modes as follows:
+> |Game|→|Patch|
+> |:-:|:-:|:-:|
+> |Windowed|→|Resizable Window|
+> |Fullscreen|→|Borderless Fullscreen|
 >
 > Use the highest available resolution when playing.
 
@@ -38,13 +41,10 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 - Place `dinput8.dll` in the install directory.
 
 ## FAQ
-#### Why do my games have high CPU usage?
-The patch asserts its own framerate limiter when active.
-
-- A game might disengage its framerate limiter.
-- A busy-wait framerate limiter is used for accuracy.
-
-This ensures the games run at 60 FPS regardless of screen mode.
+#### Is the patch compatible with other mods or patches?
+The patch has been only tested against [`thcrap`](https://github.com/thpatch/thcrap) & works flawless.
+- Other mods or patches might require testing.
+- Feel free to consult & report any issues that occur.
 
 #### Why not use vpatch for "borderless fullscreen"?
 Though vpatch allows one to [run the games at any resolution](https://maribelhearn.com/faq/graphics).
