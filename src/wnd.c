@@ -18,7 +18,8 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         ((PWINDOWPOS)lParam)->flags |= SWP_SHOWWINDOW;
         break;
     }
-    case WM_SETCURSOR: {
+    case WM_SETCURSOR:
+    case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_SYSCOMMAND: {
@@ -28,16 +29,6 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         case SC_MOUSEMENU:
             return 0;
         }
-        break;
-    }
-    case WM_PAINT: {
-        PAINTSTRUCT paint = {};
-        BeginPaint(hWnd, &paint);
-
-        HBRUSH hbr = GetStockObject(BLACK_BRUSH);
-        FillRect(paint.hdc, &paint.rcPaint, hbr);
-
-        EndPaint(hWnd, &paint);
         break;
     }
     case WM_WINDOWPOSCHANGED: {
