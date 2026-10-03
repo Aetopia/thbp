@@ -14,6 +14,10 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
     case WM_SIZE: {
         return 0;
     }
+    case WM_WINDOWPOSCHANGING: {
+        ((PWINDOWPOS)lParam)->flags |= SWP_SHOWWINDOW;
+        break;
+    }
     case WM_SETCURSOR: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
@@ -61,31 +65,18 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 LRESULT WINAPI FullScreenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    static BOOL s_flag = {};
-
-    switch (uMsg)
+    if (uMsg == WM_WINDOWPOSCHANGED)
     {
-    case WM_WINDOWPOSCHANGED:
-        if (!s_flag)
-        {
-            s_flag = TRUE;
+        MONITORINFO mi = {.cbSize = sizeof(MONITORINFO)};
+        GetMonitorInfoW(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
 
-            MONITORINFO mi = {.cbSize = sizeof(MONITORINFO)};
-            GetMonitorInfoW(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
+        INT x = mi.rcMonitor.left;
+        INT y = mi.rcMonitor.top;
 
-            INT x = mi.rcMonitor.left;
-            INT y = mi.rcMonitor.top;
+        INT cx = mi.rcMonitor.right - x;
+        INT cy = mi.rcMonitor.bottom - y;
 
-            INT cx = mi.rcMonitor.right - x;
-            INT cy = mi.rcMonitor.bottom - y;
-
-            SetWindowPos(hWnd, NULL, x, y, cx, cy, SWP_NOZORDER);
-
-            s_flag = FALSE;
-            break;
-        }
-        return 0;
+        SetWindowPos(hWnd, NULL, x, y, cx, cy, SWP_NOZORDER);
     }
-
     return WindowedWndProc(hWnd, uMsg, wParam, lParam);
 }
