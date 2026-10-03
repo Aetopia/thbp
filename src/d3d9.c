@@ -37,8 +37,6 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
-    static BOOL s_flag = {};
-
     D3DPRESENT_PARAMETERS d3dpp = *params;
     DWORD style = d3dpp.Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
     WNDPROC procedure = d3dpp.Windowed ? WindowedWndProc : FullScreenWndProc;
@@ -50,20 +48,17 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
     flags |= D3DCREATE_NOWINDOWCHANGES;
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
 
-    if (SUCCEEDED(hr) && !s_flag)
+    if (SUCCEEDED(hr) && !IsWindow(g_Wnd))
     {
-        s_flag = TRUE;
-
         g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)procedure);
         g_Wnd = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
         SetWindowLongW(wnd, GWL_STYLE, style | (IsWindowVisible(wnd) * WS_VISIBLE));
-
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-        g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
-        g_Present = CreateHook((*device)->lpVtbl->Present, Present);
+        !g_Reset && (g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset));
+        !g_Present && (g_Present = CreateHook((*device)->lpVtbl->Present, Present));
     }
 
     return hr;
