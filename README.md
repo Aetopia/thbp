@@ -48,7 +48,7 @@ The patch has been only tested against [`thcrap`](https://github.com/thpatch/thc
 - Feel free to consult & report any issues that occur.
 
 #### How to use the patch with games prior to Touhou 10?
-All games prior to Touhou 10 use D3D8 which the patch doesn't support.
+All games prior to Touhou 10 use D3D8 which isn't supported.
 - To fix this use [`d3d8to9`](https://github.com/crosire/d3d8to9/releases/latest) to make the games use D3D9.
 - This will improve compatibility with the patch & your system.
 
