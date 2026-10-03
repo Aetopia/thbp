@@ -9,6 +9,7 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 > - This list shows games that are confirmed to work.
 > - Feel free to test it with other games & report back!
 
+- Touhou 9.5 <sup>[*](#how-to-use-the-patch-with-games-prior-to-touhou-10)</sup>
 - Touhou 10
 - Touhou 12
 - Touhou 15
@@ -38,21 +39,24 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 
 - [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of `thbp`.
 - Locate a supported game on your system.
-- Place `dinput8.dll` in the install directory.
+- Place `dinput8.dll` in the install folder.
 
 ## FAQ
 #### Is the patch compatible with other mods or patches?
-The patch has been only tested against [`thcrap`](https://github.com/thpatch/thcrap) & works flawless.
+The patch has been only tested against [`thcrap`](https://github.com/thpatch/thcrap).
 - Other mods or patches might require testing.
 - Feel free to consult & report any issues that occur.
+
+#### How to use the patch with games prior to Touhou 10?
+All games prior to Touhou 10 use D3D8 which the patch doesn't support.
+- To fix this use [`d3d8to9`](https://github.com/crosire/d3d8to9/releases/latest) to make the games use D3D9.
+- This will improve compatibility with the patch & your system.
 
 #### Why not use vpatch for "borderless fullscreen"?
 Though vpatch allows one to [run the games at any resolution](https://maribelhearn.com/faq/graphics).
 
 - It requires the user to intervene & configure it, 
 - Additionally you must somewhat compromise on fullscreen.
-
-This patch solely serves as a plug & play solution for borderless fullscreen.
 
 ## Build
 1. Install [MinGW (x86)](https://www.mingw-w64.org).
