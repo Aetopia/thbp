@@ -12,13 +12,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obj")
 
 include(FetchContent)
 FetchContent_Declare(minhook GIT_REPOSITORY https://github.com/TsudaKageyu/minhook.git GIT_TAG v1.3.4)
+
 FetchContent_MakeAvailable(minhook)
-
-add_compile_definitions(INITGUID WIN32_LEAN_AND_MEAN WINVER=NTDDI_WIN10)
-add_compile_options(-municode -mstackrealign -O3 -Wno-dll-attribute-on-redeclaration)
-add_link_options(-Wl,--kill-at,--gc-sections,--exclude-all-symbols,--wrap=memcpy,--wrap=memset -nostdlib -s)
-
 add_library(dinput8 SHARED "src/main.c" "src/res.rc")
 
-target_link_options(dinput8 PRIVATE -e DllMain)
-target_link_libraries(dinput8 PRIVATE minhook kernel32 d3d9 user32 gdi32 dwmapi mfplat)
+target_compile_definitions(dinput8 PRIVATE INITGUID WINVER=NTDDI_WIN10 WIN32_LEAN_AND_MEAN)
+target_compile_options(dinput8 PRIVATE -O3 -municode -mstackrealign -Wno-dll-attribute-on-redeclaration)
+
+target_link_libraries(dinput8 PRIVATE d3d9 minhook gdi32 dwmapi user32 mfplat kernel32)
+target_link_options(dinput8 PRIVATE -s -nostdlib -e DllMain -Wl,--kill-at,--gc-sections,--exclude-all-symbols,--wrap=memcpy,--wrap=memset)
