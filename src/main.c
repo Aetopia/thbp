@@ -4,6 +4,18 @@
 #include <dinput.h>
 #include <dinputd.h>
 
+PVOID __wrap_memcpy(PVOID dst, PVOID src, SIZE_T count)
+{
+    __movsb(dst, src, count);
+    return dst;
+}
+
+PVOID __wrap_memset(PVOID dst, BYTE data, SIZE_T count)
+{
+    __stosb(dst, data, count);
+    return dst;
+}
+
 HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
 HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, LPCVOID, PVOID, PVOID) = {};
 

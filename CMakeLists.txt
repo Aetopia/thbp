@@ -15,7 +15,7 @@ FetchContent_Declare(minhook GIT_REPOSITORY https://github.com/TsudaKageyu/minho
 FetchContent_MakeAvailable(minhook)
 
 add_compile_definitions(INITGUID WIN32_LEAN_AND_MEAN WINVER=NTDDI_WIN10)
-add_compile_options(-municode -mstackrealign -Oz -Wno-dll-attribute-on-redeclaration)
+add_compile_options(-municode -mstackrealign -O3 -Wno-dll-attribute-on-redeclaration)
 add_link_options(-Wl,--kill-at,--gc-sections,--exclude-all-symbols,--wrap=memcpy,--wrap=memset -nostdlib -s)
 
 add_library(dinput8 SHARED "src/main.c" "src/res.rc")
