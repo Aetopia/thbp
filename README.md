@@ -49,8 +49,17 @@ The patch has been only tested against [`thcrap`](https://github.com/thpatch/thc
 
 #### How to use the patch with games prior to Touhou 10?
 All games prior to Touhou 10 use D3D8 which isn't supported.
-- To fix this use [`d3d8to9`](https://github.com/crosire/d3d8to9/releases/latest) to make the games use D3D9.
-- This will improve compatibility with the patch & your system.
+- The patch intercepts D3D9 to provide its features.
+
+To fix this, the games must use D3D9 via a wrapper:
+|Wrapper|Usage|
+|:-:|:-:|
+|[`d3d8to9`](https://github.com/crosire/d3d8to9)|D3D8 → D3D9|
+|[`dxvk`](https://github.com/doitsujin/dxvk)|D3D8 → D3D9 → Vulkan|
+
+> [!TIP]
+> - For modern systems, use `dxvk`.
+> - For compatibility, use `d3d8to9`.
 
 #### Why not use vpatch for "borderless fullscreen"?
 Though vpatch allows one to [run the games at any resolution](https://maribelhearn.com/faq/graphics).
