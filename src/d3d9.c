@@ -1,7 +1,7 @@
 #pragma once
 #include "wnd.c"
-#include "hook.c"
 #include <d3d9.h>
+#include <MinHook.h>
 
 LARGE_INTEGER g_Frequency = {};
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
@@ -57,8 +57,16 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         SetWindowLongW(wnd, GWL_STYLE, style | (IsWindowVisible(wnd) * WS_VISIBLE));
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-        !g_Reset && (g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset));
-        !g_Present && (g_Present = CreateHook((*device)->lpVtbl->Present, Present));
+        if (!g_Reset || !g_Present)
+        {
+            MH_CreateHook((*device)->lpVtbl->Reset, Reset, (PVOID)&g_Reset);
+            MH_CreateHook((*device)->lpVtbl->Present, Present, (PVOID)&g_Present);
+
+            MH_QueueEnableHook((*device)->lpVtbl->Reset);
+            MH_QueueEnableHook((*device)->lpVtbl->Present);
+
+            MH_ApplyQueued();
+        }
     }
 
     return hr;
