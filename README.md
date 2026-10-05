@@ -9,7 +9,7 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 > - This list shows games that are confirmed to work.
 > - Feel free to test it with other games & report back!
 
-- Touhou 9.5 <sup>[*](#how-to-use-the-patch-with-games-prior-to-touhou-10)</sup>
+- Touhou 9.5 <sup>[*](#does-the-patch-support-games-prior-to-touhou-10)</sup>
 - Touhou 10
 - Touhou 12
 - Touhou 15
@@ -44,22 +44,13 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 ## FAQ
 #### Is the patch compatible with other mods or patches?
 The patch has been only tested against [`thcrap`](https://github.com/thpatch/thcrap).
+- Feel free to report any issues that occur.
 - Other mods or patches might require testing.
-- Feel free to consult & report any issues that occur.
 
-#### How to use the patch with games prior to Touhou 10?
-All games prior to Touhou 10 use D3D8 which isn't supported.
-- The patch intercepts D3D9 to provide its features.
-
-To fix this, the games must use D3D9 via a wrapper:
-|Wrapper|Usage|
-|:-:|:-:|
-|[`d3d8to9`](https://github.com/crosire/d3d8to9)|D3D8 → D3D9|
-|[`dxvk`](https://github.com/doitsujin/dxvk)|D3D8 → D3D9 → Vulkan|
-
-> [!TIP]
-> - For modern systems, use `dxvk`.
-> - For compatibility, use `d3d8to9`.
+#### Does the patch support games prior to Touhou 10?
+All games prior to Touhou 10 aren't supported due to D3D8.
+- To fix this, install [`dxvk`](https://github.com/doitsujin/dxvk) or [`d3d8to9`](https://github.com/crosire/d3d8to9) to use D3D9.
+- This allows the patch to work with games using D3D8. 
 
 #### Why not use vpatch for "borderless fullscreen"?
 Though vpatch allows one to [run the games at any resolution](https://maribelhearn.com/faq/graphics).
