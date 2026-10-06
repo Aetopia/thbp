@@ -9,16 +9,20 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 
 HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {
-    static LARGE_INTEGER s_count = {};
+    static LARGE_INTEGER s_now = {};
 
-    LARGE_INTEGER count = {};
-    do
-    {
-        _mm_pause();
-        QueryPerformanceCounter(&count);
-    } while ((count.QuadPart - s_count.QuadPart) < g_Frequency.QuadPart);
+    LARGE_INTEGER now = {};
+    QueryPerformanceCounter(&now);
 
-    s_count = count;
+    s_now = s_now.QuadPart ? s_now : now;
+    s_now.QuadPart += g_Frequency.QuadPart;
+
+    if (s_now.QuadPart < now.QuadPart)
+        s_now = now;
+
+    while (now.QuadPart < s_now.QuadPart)
+        QueryPerformanceCounter(&now);
+
     return g_Present(this, NULL, NULL, g_Wnd, NULL);
 }
 
