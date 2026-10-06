@@ -56,11 +56,8 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         SetWindowLongW(wnd, GWL_STYLE, style | (IsWindowVisible(wnd) * WS_VISIBLE));
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-        if (!g_Reset || !g_Present)
-        {
-            g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
-            g_Present = CreateHook((*device)->lpVtbl->Present, Present);
-        }
+        !g_Reset && (g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset));
+        !g_Present && (g_Present = CreateHook((*device)->lpVtbl->Present, Present));
     }
 
     return hr;
