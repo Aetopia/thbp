@@ -1,4 +1,3 @@
-#pragma once
 #include <memoryapi.h>
 #include <processthreadsapi.h>
 

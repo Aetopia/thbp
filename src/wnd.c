@@ -1,4 +1,3 @@
-#pragma once
 #include <windef.h>
 #include <wingdi.h>
 #include <winuser.h>

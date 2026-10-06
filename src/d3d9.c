@@ -1,4 +1,3 @@
-#pragma once
 #include "wnd.c"
 #include <d3d9.h>
 #include <MinHook.h>
