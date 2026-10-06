@@ -49,15 +49,15 @@ The patch has been only tested against [`thcrap`](https://github.com/thpatch/thc
 
 #### Does the patch support games prior to Touhou 10?
 All games prior to Touhou 10 aren't supported due to D3D8.
-- To fix this, install [`dxvk`](https://github.com/doitsujin/dxvk) or [`d3d8to9`](https://github.com/crosire/d3d8to9) to use D3D9.
-- This allows the patch to work with games using D3D8. 
+- To fix this, install [`d3d8to9`](https://github.com/crosire/d3d8to9) to promote D3D9.
+- Any games that use D3D8 will now be compatible.
 
 #### Why not use vpatch for "borderless fullscreen"?
 Though vpatch allows one to [run the games at any resolution](https://maribelhearn.com/faq/graphics).
 
-- It requires the user to intervene & configure it, 
-- Additionally you must somewhat compromise on fullscreen.
+- It requires you to intervene & configure it.
+- You also somewhat compromise on fullscreen.
 
 ## Build
-1. Install [MinGW (x86)](https://www.mingw-w64.org).
+1. Install [MinGW (x86)](https://www.mingw-w64.org) on your system.
 2. Run [`BUILD.cmd`](BUILD.cmd) to build the project.
