@@ -9,6 +9,7 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 > - This list shows games that are confirmed to work.
 > - Feel free to test it with other games & report back!
 
+- Touhou 9 <sup>[*](#does-the-patch-support-games-prior-to-touhou-10)</sup>
 - Touhou 9.5 <sup>[*](#does-the-patch-support-games-prior-to-touhou-10)</sup>
 - Touhou 10
 - Touhou 12
