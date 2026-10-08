@@ -2,25 +2,25 @@
 #include "hook.c"
 #include <d3d9.h>
 
-LARGE_INTEGER g_Frequency = {};
+LARGE_INTEGER g_Ticks = {};
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
 
 HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {
-    static LARGE_INTEGER s_now = {};
+    static LARGE_INTEGER last = {};
 
     LARGE_INTEGER now = {};
     QueryPerformanceCounter(&now);
 
-    s_now = s_now.QuadPart ? s_now : now;
-    s_now.QuadPart += g_Frequency.QuadPart;
+    last = last.QuadPart ? last : now;
+    last.QuadPart += g_Ticks.QuadPart;
 
-    if (s_now.QuadPart < now.QuadPart)
-        s_now = now;
+    if (last.QuadPart < now.QuadPart)
+        last = now;
 
-    while (now.QuadPart < s_now.QuadPart)
+    while (now.QuadPart < last.QuadPart)
         QueryPerformanceCounter(&now);
 
     return g_Present(this, NULL, NULL, g_Wnd, NULL);

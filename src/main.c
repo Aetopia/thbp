@@ -34,8 +34,8 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         });
         DwmEnableMMCSS(TRUE);
 
-        QueryPerformanceFrequency(&g_Frequency);
-        g_Frequency.QuadPart = MFllMulDiv(g_Frequency.QuadPart, 1, 60, 0);
+        QueryPerformanceFrequency(&g_Ticks);
+        g_Ticks.QuadPart = MFllMulDiv(g_Ticks.QuadPart, 1, 60, 0);
 
         WCHAR path[MAX_PATH] = {};
         GetSystemDirectoryW(path, MAX_PATH);
