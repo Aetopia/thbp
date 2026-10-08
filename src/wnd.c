@@ -16,9 +16,7 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_WINDOWPOSCHANGING: {
-        PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        wp->flags |= SWP_SHOWWINDOW;
-        wp->flags &= ~SWP_HIDEWINDOW;
+        ((PWINDOWPOS)lParam)->flags |= SWP_SHOWWINDOW;
         break;
     }
     case WM_SYSCOMMAND: {
