@@ -57,8 +57,8 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         g_Wnd = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
-        SetWindowLongW(wnd, GWL_STYLE, style | (IsWindowVisible(wnd) * WS_VISIBLE));
-        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        SetWindowLongW(wnd, GWL_STYLE, style | (WS_VISIBLE * IsWindowVisible(wnd)));
+        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME);
 
         !g_Reset && (g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset));
         !g_Present && (g_Present = CreateHook((*device)->lpVtbl->Present, Present));
