@@ -52,11 +52,10 @@ LRESULT WINAPI FullScreenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 {
     if (uMsg == WM_WINDOWPOSCHANGING)
     {
-        PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        RECT rc = {wp->x, wp->y, wp->x + wp->cx, wp->y + wp->cy};
-
         MONITORINFO mi = {sizeof(MONITORINFO)};
-        GetMonitorInfoW(MonitorFromRect(&rc, MONITOR_DEFAULTTONEAREST), &mi);
+        GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
+
+        PWINDOWPOS wp = (PWINDOWPOS)lParam;
 
         wp->flags &= ~SWP_NOMOVE;
         wp->flags &= ~SWP_NOSIZE;
