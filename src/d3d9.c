@@ -7,6 +7,17 @@ HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
 
+HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
+{
+    D3DPRESENT_PARAMETERS d3dpp = *params;
+
+    d3dpp.Windowed = TRUE;
+    d3dpp.FullScreen_RefreshRateInHz = 0;
+    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+
+    return g_Reset(this, &d3dpp);
+}
+
 HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {
     static LARGE_INTEGER last = {};
@@ -26,23 +37,22 @@ HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
     return g_Present(this, NULL, NULL, g_Wnd, NULL);
 }
 
-HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
-{
-    D3DPRESENT_PARAMETERS d3dpp = *params;
-
-    d3dpp.Windowed = TRUE;
-    d3dpp.FullScreen_RefreshRateInHz = 0;
-    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
-    return g_Reset(this, &d3dpp);
-}
-
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
     DWORD style = d3dpp.Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
     WNDPROC procedure = d3dpp.Windowed ? WindowedWndProc : FullScreenWndProc;
+
+    if (!IsWindow(g_Wnd))
+    {
+        g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)procedure);
+        g_Wnd = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
+
+        SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
+        SetWindowLongW(wnd, GWL_STYLE, style | (WS_VISIBLE * IsWindowVisible(wnd)));
+        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME);
+    }
 
     d3dpp.Windowed = TRUE;
     d3dpp.FullScreen_RefreshRateInHz = 0;
@@ -51,17 +61,10 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
     flags |= D3DCREATE_NOWINDOWCHANGES;
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
 
-    if (SUCCEEDED(hr) && !IsWindow(g_Wnd))
+    if (SUCCEEDED(hr) && !g_Present && !g_Reset)
     {
-        g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)procedure);
-        g_Wnd = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
-
-        SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
-        SetWindowLongW(wnd, GWL_STYLE, style | (WS_VISIBLE * IsWindowVisible(wnd)));
-        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME);
-
-        !g_Reset && (g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset));
-        !g_Present && (g_Present = CreateHook((*device)->lpVtbl->Present, Present));
+        g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
+        g_Present = CreateHook((*device)->lpVtbl->Present, Present);
     }
 
     return hr;
