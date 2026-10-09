@@ -49,8 +49,12 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)procedure);
         g_Wnd = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
+        SetClassLongW(wnd, GCLP_HCURSOR, (LONG)LoadCursorW(NULL, IDC_ARROW));
+        SetClassLongW(wnd, GCLP_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
+
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
         SetWindowLongW(wnd, GWL_STYLE, style | (WS_VISIBLE * IsWindowVisible(wnd)));
+
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_DRAWFRAME | SWP_SHOWWINDOW);
     }
 
