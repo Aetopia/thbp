@@ -50,3 +50,9 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 ## Build
 1. Install [MinGW (x86)](https://www.mingw-w64.org) on your system.
 2. Run [`BUILD.cmd`](BUILD.cmd) to build the project.
+
+## References
+- https://github.com/astral4/neopatch
+- https://github.com/GensokyoClub/th06
+- https://github.com/GensokyoClub/th08
+- https://github.com/khang06/OpenInputLagPatch
