@@ -10,13 +10,11 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 {
     switch (uMsg)
     {
-    case WM_SIZE: {
-        return 0;
-    }
     case WM_WINDOWPOSCHANGING: {
         ((PWINDOWPOS)lParam)->flags |= SWP_SHOWWINDOW;
         break;
     }
+    case WM_SIZE:
     case WM_SETCURSOR:
     case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
@@ -47,7 +45,7 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         INT y = (rc.bottom - cy) / 2;
 
         SetWindowPos(g_Wnd, NULL, x, y, cx, cy, SWP_NOZORDER);
-        return 0;
+        break;
     }
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
