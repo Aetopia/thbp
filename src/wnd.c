@@ -49,8 +49,12 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 LRESULT WINAPI FullScreenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if (uMsg == WM_WINDOWPOSCHANGING)
+    switch (uMsg)
     {
+    case WM_SETCURSOR: {
+        return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
+    }
+    case WM_WINDOWPOSCHANGING: {
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
         RECT rc = {wp->x, wp->y, wp->x + wp->cx, wp->y + wp->cy};
 
@@ -65,6 +69,8 @@ LRESULT WINAPI FullScreenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
         wp->cx = mi.rcMonitor.right - wp->x;
         wp->cy = mi.rcMonitor.bottom - wp->y;
+        break;
+    }
     }
     return WindowedWndProc(hWnd, uMsg, wParam, lParam);
 }
