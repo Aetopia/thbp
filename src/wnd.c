@@ -49,8 +49,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case GWL_EXSTYLE:
             ss->styleNew = WS_EX_LEFT;
             break;
-        
-        case GWL_STYLE: 
+
+        case GWL_STYLE:
             ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
             ss->styleNew |= g_FullScreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
             break;
@@ -77,12 +77,13 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_WINDOWPOSCHANGING:
+        PWINDOWPOS wp = (PWINDOWPOS)lParam;
+        wp->flags |= SWP_DRAWFRAME;
+
         if (g_FullScreen)
         {
             MONITORINFO mi = {sizeof(MONITORINFO)};
             GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
-
-            PWINDOWPOS wp = (PWINDOWPOS)lParam;
 
             wp->flags &= ~SWP_NOMOVE;
             wp->flags &= ~SWP_NOSIZE;
