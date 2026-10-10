@@ -65,12 +65,12 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetClientRect(hWnd, &rc);
 
         INT cx = rc.right;
-        INT cy = MulDiv(cx, 3, 4);
+        INT cy = MulDiv(cx, g_Height, g_Width);
 
         if (cy > rc.bottom)
         {
             cy = rc.bottom;
-            cx = MulDiv(cy, 4, 3);
+            cx = MulDiv(cy, g_Width, g_Height);
         }
 
         INT x = (rc.right - cx) / 2;
