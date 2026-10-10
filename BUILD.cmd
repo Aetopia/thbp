@@ -11,7 +11,7 @@ md "obj"
 
 i686-w64-mingw32-windres.exe -i "res.rc" -o "obj\res.o"
 
-i686-w64-mingw32-gcc.exe ^
+i686-w64-mingw32-gcc.exe -std=c23 ^
 -DINITGUID -DWINVER=NTDDI_WIN10 -DWIN32_LEAN_AND_MEAN ^
 -e "DllMain" -s -Oz -shared -municode -nostdlib -mstackrealign ^
 -Wl,--kill-at,--gc-sections,--exclude-all-symbols -Wno-dll-attribute-on-redeclaration ^
