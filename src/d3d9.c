@@ -7,7 +7,7 @@ HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
 
-HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
+HRESULT WINAPI Reset(LPDIRECT3DDEVICE9 this, D3DPRESENT_PARAMETERS *params)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
     g_FullScreen = !d3dpp.Windowed;
@@ -15,6 +15,13 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
     d3dpp.Windowed = TRUE;
     d3dpp.FullScreen_RefreshRateInHz = 0;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+
+    D3DDEVICE_CREATION_PARAMETERS d3ddcp = {};
+    this->lpVtbl->GetCreationParameters(this, &d3ddcp);
+
+    SetWindowLongW(d3ddcp.hFocusWindow, GWL_EXSTYLE, WS_EX_LEFT);
+    SetWindowLongW(d3ddcp.hFocusWindow, GWL_STYLE, WS_OVERLAPPED);
+    SetWindowPos(d3ddcp.hFocusWindow, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME);
 
     return g_Reset(this, &d3dpp);
 }

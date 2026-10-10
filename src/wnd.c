@@ -46,15 +46,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
         switch (wParam)
         {
-        case GWL_EXSTYLE: {
+        case GWL_EXSTYLE:
             ss->styleNew = WS_EX_LEFT;
             break;
-        }
-        case GWL_STYLE: {
+        
+        case GWL_STYLE: 
             ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
             ss->styleNew |= g_FullScreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
             break;
-        }
         }
         break;
 
