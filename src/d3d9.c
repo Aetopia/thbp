@@ -10,7 +10,7 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
-    g_Windowed = d3dpp.Windowed;
+    g_FullScreen = !d3dpp.Windowed;
 
     d3dpp.Windowed = TRUE;
     d3dpp.FullScreen_RefreshRateInHz = 0;
@@ -42,18 +42,15 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
-    g_Windowed = d3dpp.Windowed;
+    g_FullScreen = !d3dpp.Windowed;
 
     if (!IsWindow(g_Wnd))
     {
-        DWORD style = d3dpp.Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
-        WNDPROC procedure = d3dpp.Windowed ? WindowedWndProc : FullScreenWndProc;
-
-        g_WndProc = (PVOID)SetWindowLongW(wnd, GWLP_WNDPROC, (LONG_PTR)procedure);
+        g_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG_PTR)WndProc);
         g_Wnd = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
-        SetWindowLongW(wnd, GWL_STYLE, style | (WS_VISIBLE * IsWindowVisible(wnd)));
+        SetWindowLongW(wnd, GWL_STYLE, WS_OVERLAPPED);
 
         SetClassLongW(wnd, GCLP_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_DRAWFRAME | SWP_SHOWWINDOW);
@@ -65,10 +62,13 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
 
-    if (SUCCEEDED(hr) && !g_Present && !g_Reset)
+    if (SUCCEEDED(hr))
     {
-        g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
-        g_Present = CreateHook((*device)->lpVtbl->Present, Present);
+        if (!g_Reset)
+            g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
+
+        if (!g_Present)
+            g_Present = CreateHook((*device)->lpVtbl->Present, Present);
     }
 
     return hr;

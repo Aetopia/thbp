@@ -4,10 +4,10 @@
 #include <winbase.h>
 
 HWND g_Wnd = {};
-BOOL g_Windowed = {};
+BOOL g_FullScreen = {};
 WNDPROC g_WndProc = {};
 
-LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
@@ -16,7 +16,7 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         while (ShowCursor(TRUE) < 0)
             continue;
 
-        if (!g_Windowed && hWnd == GetForegroundWindow())
+        if (g_FullScreen && hWnd == GetForegroundWindow())
         {
             SetCursor(NULL);
 
@@ -52,7 +52,7 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         }
         case GWL_STYLE: {
             ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
-            ss->styleNew |= g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
+            ss->styleNew |= g_FullScreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
             break;
         }
         }
@@ -78,7 +78,7 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         break;
 
     case WM_WINDOWPOSCHANGING:
-        if (!g_Windowed)
+        if (g_FullScreen)
         {
             MONITORINFO mi = {sizeof(MONITORINFO)};
             GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
@@ -97,36 +97,4 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         break;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
-}
-
-LRESULT WINAPI FullScreenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    switch (uMsg)
-    {
-    case WM_SETCURSOR:
-    case WM_NCACTIVATE:
-        if (hWnd == GetForegroundWindow())
-        {
-            SetCursor(NULL);
-            return TRUE;
-        }
-        break;
-
-    case WM_WINDOWPOSCHANGING:
-        MONITORINFO mi = {sizeof(MONITORINFO)};
-        GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
-
-        PWINDOWPOS wp = (PWINDOWPOS)lParam;
-
-        wp->flags &= ~SWP_NOMOVE;
-        wp->flags &= ~SWP_NOSIZE;
-
-        wp->x = mi.rcMonitor.left;
-        wp->y = mi.rcMonitor.top;
-
-        wp->cx = mi.rcMonitor.right - wp->x;
-        wp->cy = mi.rcMonitor.bottom - wp->y;
-        break;
-    }
-    return WindowedWndProc(hWnd, uMsg, wParam, lParam);
 }
