@@ -76,6 +76,25 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
         SetWindowPos(g_Wnd, NULL, x, y, cx, cy, 0);
         break;
+
+    case WM_WINDOWPOSCHANGING:
+        if (!g_Windowed)
+        {
+            MONITORINFO mi = {sizeof(MONITORINFO)};
+            GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
+
+            PWINDOWPOS wp = (PWINDOWPOS)lParam;
+
+            wp->flags &= ~SWP_NOMOVE;
+            wp->flags &= ~SWP_NOSIZE;
+
+            wp->x = mi.rcMonitor.left;
+            wp->y = mi.rcMonitor.top;
+
+            wp->cx = mi.rcMonitor.right - wp->x;
+            wp->cy = mi.rcMonitor.bottom - wp->y;
+        }
+        break;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
 }
