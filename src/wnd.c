@@ -3,8 +3,9 @@
 #include <winuser.h>
 #include <winbase.h>
 
+BOOL g_Windowed = {};
+
 HWND g_Wnd = {};
-BOOL g_FullScreen = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -16,7 +17,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         while (ShowCursor(TRUE) < 0)
             continue;
 
-        if (g_FullScreen && hWnd == GetForegroundWindow())
+        if (!g_Windowed && hWnd == GetForegroundWindow())
         {
             SetCursor(NULL);
 
@@ -52,7 +53,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case GWL_STYLE:
             ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
-            ss->styleNew |= g_FullScreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
+            ss->styleNew |= g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
             break;
         }
         break;
@@ -80,7 +81,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
         wp->flags |= SWP_DRAWFRAME;
 
-        if (g_FullScreen)
+        if (!g_Windowed)
         {
             MONITORINFO mi = {sizeof(MONITORINFO)};
             GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);

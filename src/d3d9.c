@@ -3,6 +3,7 @@
 #include <d3d9.h>
 
 LARGE_INTEGER g_Ticks = {};
+
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
@@ -10,7 +11,7 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
-    g_FullScreen = !d3dpp.Windowed;
+    g_Windowed = d3dpp.Windowed;
 
     d3dpp.Windowed = TRUE;
     d3dpp.FullScreen_RefreshRateInHz = 0;
@@ -42,7 +43,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
-    g_FullScreen = !d3dpp.Windowed;
+    g_Windowed = d3dpp.Windowed;
 
     if (!IsWindow(g_Wnd))
     {
