@@ -20,8 +20,25 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         switch (GET_SC_WPARAM(wParam))
         {
         case SC_KEYMENU:
-        case SC_MOUSEMENU:
+        case SC_MOUSEMENU: {
             return 0;
+        }
+        }
+        break;
+    }
+    case WM_STYLECHANGING: {
+        LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
+        switch (wParam)
+        {
+        case GWL_EXSTYLE: {
+            ss->styleNew = WS_EX_LEFT;
+            break;
+        }
+        case GWL_STYLE: {
+            ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
+            ss->styleNew |= g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
+            break;
+        }
         }
         break;
     }
