@@ -3,6 +3,8 @@
 #include <winuser.h>
 #include <winbase.h>
 
+UINT g_Width = {};
+UINT g_Height = {};
 BOOL g_Windowed = {};
 
 HWND g_Wnd = {};
