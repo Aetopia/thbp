@@ -19,6 +19,7 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 - Touhou 10
 - Touhou 12
 - Touhou 15
+- Touhou 20
 
 <div align="center">
 
