@@ -11,21 +11,38 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 {
     switch (uMsg)
     {
-    case WM_SIZE:
     case WM_SETCURSOR:
-    case WM_ERASEBKGND: 
+    case WM_NCACTIVATE:
+        while (ShowCursor(TRUE) < 0)
+            continue;
+
+        if (!g_Windowed && hWnd == GetForegroundWindow())
+        {
+            SetCursor(NULL);
+
+            if (uMsg == WM_SETCURSOR)
+                return TRUE;
+
+            if (uMsg == WM_NCACTIVATE)
+                break;
+        }
+
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
-    
-    case WM_SYSCOMMAND: 
+
+    case WM_SIZE:
+    case WM_ERASEBKGND:
+        return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+
+    case WM_SYSCOMMAND:
         switch (GET_SC_WPARAM(wParam))
         {
         case SC_KEYMENU:
-        case SC_MOUSEMENU: 
+        case SC_MOUSEMENU:
             return 0;
         }
         break;
-    
-    case WM_STYLECHANGING: 
+
+    case WM_STYLECHANGING:
         LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
         switch (wParam)
         {
@@ -40,8 +57,8 @@ LRESULT WINAPI WindowedWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         }
         }
         break;
-    
-    case WM_WINDOWPOSCHANGED: 
+
+    case WM_WINDOWPOSCHANGED:
         RECT rc = {};
         GetClientRect(hWnd, &rc);
 
@@ -68,15 +85,15 @@ LRESULT WINAPI FullScreenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
     switch (uMsg)
     {
     case WM_SETCURSOR:
-    case WM_NCACTIVATE: 
+    case WM_NCACTIVATE:
         if (hWnd == GetForegroundWindow())
         {
             SetCursor(NULL);
             return TRUE;
         }
         break;
-    
-    case WM_WINDOWPOSCHANGING: 
+
+    case WM_WINDOWPOSCHANGING:
         MONITORINFO mi = {sizeof(MONITORINFO)};
         GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
 

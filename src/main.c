@@ -32,9 +32,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
             .hCursor = LoadCursorW(NULL, IDC_ARROW),
             .hbrBackground = GetStockObject(BLACK_BRUSH),
         });
-
         DwmEnableMMCSS(TRUE);
-        CreateHook(ShowCursor, _);
 
         QueryPerformanceFrequency(&g_Ticks);
         g_Ticks.QuadPart = MFllMulDiv(g_Ticks.QuadPart, 1, 60, 0);
