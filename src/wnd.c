@@ -53,7 +53,6 @@ LRESULT WINAPI FullScreenWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
     {
     case WM_SETCURSOR:
     case WM_NCACTIVATE: {
-        ShowCursor(TRUE);
         if (hWnd == GetForegroundWindow())
         {
             SetCursor(NULL);
