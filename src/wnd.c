@@ -3,11 +3,8 @@
 #include <winuser.h>
 #include <winbase.h>
 
-UINT g_Width = {};
-UINT g_Height = {};
-BOOL g_Windowed = {};
-
 HWND g_Wnd = {};
+BOOL g_Windowed = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -65,12 +62,12 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetClientRect(hWnd, &rc);
 
         INT cx = rc.right;
-        INT cy = MulDiv(cx, g_Height, g_Width);
+        INT cy = MulDiv(cx, 3, 4);
 
         if (cy > rc.bottom)
         {
             cy = rc.bottom;
-            cx = MulDiv(cy, g_Width, g_Height);
+            cx = MulDiv(cy, 4, 3);
         }
 
         INT x = (rc.right - cx) / 2;
