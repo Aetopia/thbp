@@ -11,7 +11,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-    case WM_SIZE:
     case WM_ERASEBKGND:
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 
@@ -25,17 +24,15 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_STYLECHANGING:
-        LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
-        switch (wParam)
+        if (!g_Windowed)
         {
-        case GWL_EXSTYLE:
-            ss->styleNew = WS_EX_LEFT;
-            break;
+            LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
 
-        case GWL_STYLE:
-            ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
-            ss->styleNew |= g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
-            break;
+            if (wParam == GWL_EXSTYLE)
+                ss->styleNew = WS_EX_LEFT;
+
+            if (wParam == GWL_STYLE)
+                ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
         }
         break;
 
@@ -44,9 +41,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetClientRect(hWnd, &rc);
 
         INT cx = rc.right;
-        INT cy = MulDiv(cx, 3, 4);
+        INT cy = rc.bottom;
 
-        if (cy > rc.bottom)
+        if (!g_Windowed && (cy = MulDiv(cx, 3, 4)) > rc.bottom)
         {
             cy = rc.bottom;
             cx = MulDiv(cy, 4, 3);
@@ -60,7 +57,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_WINDOWPOSCHANGING:
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        wp->flags |= SWP_DRAWFRAME;
 
         if (!g_Windowed)
         {
@@ -76,6 +72,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             wp->cx = mi.rcMonitor.right - wp->x;
             wp->cy = mi.rcMonitor.bottom - wp->y;
         }
+
+        wp->flags |= SWP_DRAWFRAME;
         break;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
