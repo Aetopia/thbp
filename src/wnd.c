@@ -11,24 +11,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-    case WM_SETCURSOR:
-    case WM_NCACTIVATE:
-        while (ShowCursor(TRUE) < 0)
-            continue;
-
-        if (!g_Windowed && hWnd == GetForegroundWindow())
-        {
-            SetCursor(NULL);
-
-            if (uMsg == WM_SETCURSOR)
-                return TRUE;
-
-            if (uMsg == WM_NCACTIVATE)
-                break;
-        }
-
-        return DefWindowProcW(hWnd, uMsg, wParam, lParam);
-
     case WM_SIZE:
     case WM_ERASEBKGND:
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
