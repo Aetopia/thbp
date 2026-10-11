@@ -53,7 +53,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         if (!d3dpp.Windowed)
         {
             SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
-            SetWindowLongW(wnd, GWL_STYLE, WS_VISIBLE * IsWindowVisible(wnd));
+            SetWindowLongW(wnd, GWL_STYLE, WS_OVERLAPPED);
         }
 
         SetClassLongW(wnd, GCLP_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));

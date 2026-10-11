@@ -3,8 +3,9 @@
 #include <winuser.h>
 #include <winbase.h>
 
-HWND g_Wnd = {};
 BOOL g_Windowed = {};
+
+HWND g_Wnd = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -32,7 +33,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 ss->styleNew = WS_EX_LEFT;
 
             if (wParam == GWL_STYLE)
-                ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
+                ss->styleNew = WS_POPUP | (WS_VISIBLE * IsWindowVisible(hWnd));
         }
         break;
 
@@ -57,6 +58,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_WINDOWPOSCHANGING:
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
+        wp->flags |= SWP_DRAWFRAME;
 
         if (!g_Windowed)
         {
@@ -72,8 +74,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             wp->cx = mi.rcMonitor.right - wp->x;
             wp->cy = mi.rcMonitor.bottom - wp->y;
         }
-
-        wp->flags |= SWP_DRAWFRAME;
         break;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
