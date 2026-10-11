@@ -1,6 +1,6 @@
 # Touhou Borderless Patch
 
-Adds resizable window & borderless fullscreen support to Touhou games with aspect ratio preservation.
+Adds borderless fullscreen support to Touhou.
 
 ## Games
 
@@ -23,7 +23,7 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 
 <div align="center">
 
-[![](https://img.youtube.com/vi/19nlS8QVjpo/maxresdefault.jpg)](https://youtu.be/19nlS8QVjpo)
+https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
 
 </div>
 
@@ -35,14 +35,9 @@ Adds resizable window & borderless fullscreen support to Touhou games with aspec
 
 ## Usage
 
-> [!TIP]
-> The patch will promote screen modes as follows:
-> |Game|→|Patch|
-> |:-:|:-:|:-:|
-> |Windowed|→|Resizable Window|
-> |Fullscreen|→|Borderless Fullscreen|
->
-> Use the highest available resolution when playing.
+> [!IMPORTANT]
+> - The patch will promote fullscreen to borderless.
+> - Use the highest available resolution when playing.
 
 - [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of `thbp`.
 - Locate a supported game on your system.
