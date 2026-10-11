@@ -36,7 +36,7 @@ HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
     while (now.QuadPart < last.QuadPart)
         QueryPerformanceCounter(&now);
 
-    return g_Present(this, NULL, NULL, g_Wnd, NULL);
+    return g_Present(this, src, dst, g_Wnd, rgn);
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
