@@ -10,16 +10,14 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
+    g_Windowed = params->Windowed;
     D3DPRESENT_PARAMETERS d3dpp = *params;
 
-    g_Windowed = d3dpp.Windowed;
     d3dpp.Windowed = TRUE;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;
 
-    d3dpp.BackBufferCount = 0;
-    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-
-    d3dpp.FullScreen_RefreshRateInHz = 0;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    d3dpp.BackBufferCount = d3dpp.FullScreen_RefreshRateInHz = 0;
 
     return g_Reset(this, &d3dpp);
 }
@@ -50,16 +48,14 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
+    g_Windowed = params->Windowed;
     D3DPRESENT_PARAMETERS d3dpp = *params;
 
-    g_Windowed = d3dpp.Windowed;
     d3dpp.Windowed = TRUE;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;
 
-    d3dpp.BackBufferCount = 0;
-    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-
-    d3dpp.FullScreen_RefreshRateInHz = 0;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+    d3dpp.BackBufferCount = d3dpp.FullScreen_RefreshRateInHz = 0;
 
     if (!IsWindow(g_Wnd))
     {
