@@ -26,16 +26,13 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         DisableThreadLibraryCalls(instance);
         SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
-        WNDCLASSW wc = {
+        RegisterClassW( &(WNDCLASSW) {
             .lpszClassName = L" ",
             .lpfnWndProc = DefWindowProcW,
             .hCursor = LoadCursorW(NULL, IDC_ARROW),
             .hbrBackground = GetStockObject(BLACK_BRUSH),
-        };
-
-        RegisterClassW(&wc);
+        });
         DwmEnableMMCSS(TRUE);
-        CreateHook(ShowCursor, _);
 
         QueryPerformanceFrequency(&g_Ticks);
         g_Ticks.QuadPart = MFllMulDiv(g_Ticks.QuadPart, 1, 60, 0);
@@ -52,6 +49,8 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
 
         g_DirectInput8Create(instance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (PVOID)&dinput8, NULL);
         dinput8->lpVtbl->CreateDevice(dinput8, &GUID_SysMouseEm, &device, NULL);
+
+        CreateHook(ShowCursor, $ShowCursor);
 
         g_CreateDevice = CreateHook(d3d9->lpVtbl->CreateDevice, CreateDevice);
         g_SetCooperativeLevel = CreateHook(device->lpVtbl->SetCooperativeLevel, SetCooperativeLevel);

@@ -1,9 +1,9 @@
 #include <memoryapi.h>
 #include <processthreadsapi.h>
 
-INT WINAPI _(BOOL _)
+INT WINAPI $ShowCursor(BOOL show)
 {
-    return _ ? 1 : -1;
+    return show ? 1 : -1;
 }
 
 PVOID CreateHook(PVOID src, PVOID dst)
