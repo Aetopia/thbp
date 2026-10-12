@@ -1,6 +1,4 @@
-#include <windef.h>
-#include <winuser.h>
-#include <winbase.h>
+#include <windows.h>
 
 BOOL g_Windowed = {};
 

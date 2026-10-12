@@ -26,7 +26,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         DisableThreadLibraryCalls(instance);
         SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
-        RegisterClassW( &(WNDCLASSW) {
+        RegisterClassW(&(WNDCLASSW){
             .lpszClassName = L" ",
             .lpfnWndProc = DefWindowProcW,
             .hCursor = LoadCursorW(NULL, IDC_ARROW),
@@ -51,6 +51,8 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         dinput8->lpVtbl->CreateDevice(dinput8, &GUID_SysMouseEm, &device, NULL);
 
         CreateHook(ShowCursor, $ShowCursor);
+        g_EnumDisplaySettingsA = CreateHook(EnumDisplaySettingsA, $EnumDisplaySettingsA);
+        g_EnumDisplaySettingsW = CreateHook(EnumDisplaySettingsW, $EnumDisplaySettingsW);
 
         g_CreateDevice = CreateHook(d3d9->lpVtbl->CreateDevice, CreateDevice);
         g_SetCooperativeLevel = CreateHook(device->lpVtbl->SetCooperativeLevel, SetCooperativeLevel);
