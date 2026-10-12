@@ -11,10 +11,7 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
-
     g_Windowed = d3dpp.Windowed;
-    g_Width = d3dpp.BackBufferWidth;
-    g_Height = d3dpp.BackBufferHeight;
 
     d3dpp.Windowed = TRUE;
     d3dpp.FullScreen_RefreshRateInHz = 0;
@@ -46,10 +43,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
-
     g_Windowed = d3dpp.Windowed;
-    g_Width = d3dpp.BackBufferWidth;
-    g_Height = d3dpp.BackBufferHeight;
 
     if (!IsWindow(g_Wnd))
     {
