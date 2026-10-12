@@ -18,12 +18,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 
     case WM_SYSCOMMAND:
-        switch (GET_SC_WPARAM(wParam))
-        {
-        case SC_KEYMENU:
-        case SC_MOUSEMENU:
+        if (GET_SC_WPARAM(wParam) != SC_CLOSE)
             return 0;
-        }
         break;
 
     case WM_SETCURSOR:
