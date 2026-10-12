@@ -14,6 +14,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
+    case WM_SIZE:
     case WM_ERASEBKGND:
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 
@@ -27,15 +28,17 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_STYLECHANGING:
-        if (!g_Windowed)
+        LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
+        switch (wParam)
         {
-            LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
+        case GWL_EXSTYLE:
+            ss->styleNew = WS_EX_LEFT;
+            break;
 
-            if (wParam == GWL_EXSTYLE)
-                ss->styleNew = WS_EX_LEFT;
-
-            if (wParam == GWL_STYLE)
-                ss->styleNew = WS_POPUP | (WS_VISIBLE * IsWindowVisible(hWnd));
+        case GWL_STYLE:
+            ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
+            ss->styleNew |= g_Windowed ? (WS_CAPTION | WS_SYSMENU) : WS_POPUP;
+            break;
         }
         break;
 
@@ -60,22 +63,18 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_WINDOWPOSCHANGING:
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
+        MONITORINFO mi = {sizeof(MONITORINFO)};
+        GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
+
+        wp->flags &= ~SWP_NOMOVE;
+        wp->flags &= ~SWP_NOSIZE;
         wp->flags |= SWP_DRAWFRAME;
 
-        if (!g_Windowed)
-        {
-            MONITORINFO mi = {sizeof(MONITORINFO)};
-            GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
+        wp->x = mi.rcMonitor.left;
+        wp->y = mi.rcMonitor.top;
 
-            wp->flags &= ~SWP_NOMOVE;
-            wp->flags &= ~SWP_NOSIZE;
-
-            wp->x = mi.rcMonitor.left;
-            wp->y = mi.rcMonitor.top;
-
-            wp->cx = mi.rcMonitor.right - wp->x;
-            wp->cy = mi.rcMonitor.bottom - wp->y;
-        }
+        wp->cx = mi.rcMonitor.right - wp->x;
+        wp->cy = mi.rcMonitor.bottom - wp->y;
         break;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
