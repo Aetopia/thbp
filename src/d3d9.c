@@ -68,13 +68,10 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
 
-    if (SUCCEEDED(hr))
+    if (SUCCEEDED(hr) && !g_Present && !g_Reset)
     {
-        if (!g_Reset)
-            g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
-
-        if (!g_Present)
-            g_Present = CreateHook((*device)->lpVtbl->Present, Present);
+        g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
+        g_Present = CreateHook((*device)->lpVtbl->Present, Present);
     }
 
     return hr;
