@@ -26,12 +26,14 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         DisableThreadLibraryCalls(instance);
         SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
-        RegisterClassW(&(WNDCLASSW){
+        WNDCLASSW wc = {
             .lpszClassName = L" ",
             .lpfnWndProc = DefWindowProcW,
             .hCursor = LoadCursorW(NULL, IDC_ARROW),
             .hbrBackground = GetStockObject(BLACK_BRUSH),
-        });
+        };
+
+        RegisterClassW(&wc);
         DwmEnableMMCSS(TRUE);
 
         QueryPerformanceFrequency(&g_Ticks);
