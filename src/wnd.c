@@ -49,37 +49,37 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_WINDOWPOSCHANGED:
-        RECT rc = {};
-        GetClientRect(hWnd, &rc);
+        RECT cr = {};
+        GetClientRect(hWnd, &cr);
 
-        INT cx = rc.right;
+        INT cx = cr.right;
         INT cy = MulDiv(cx, 3, 4);
 
-        if (cy > rc.bottom)
+        if (cy > cr.bottom)
         {
-            cy = rc.bottom;
+            cy = cr.bottom;
             cx = MulDiv(cy, 4, 3);
         }
 
-        INT x = (rc.right - cx) / 2;
-        INT y = (rc.bottom - cy) / 2;
+        INT x = (cr.right - cx) / 2;
+        INT y = (cr.bottom - cy) / 2;
 
         SetWindowPos(g_Wnd, NULL, x, y, cx, cy, 0);
         return 0;
 
     case WM_WINDOWPOSCHANGING:
-        PWINDOWPOS wp = (PWINDOWPOS)lParam;
         MONITORINFO mi = {sizeof(MONITORINFO)};
         GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
+
+        PWINDOWPOS wp = (PWINDOWPOS)lParam;
+        RECT wr = g_Windowed ? mi.rcWork : mi.rcMonitor;
 
         wp->flags &= ~SWP_NOMOVE;
         wp->flags &= ~SWP_NOSIZE;
         wp->flags |= SWP_DRAWFRAME;
 
-        wp->y = mi.rcMonitor.top;
-        wp->x = mi.rcMonitor.left;
-        wp->cx = mi.rcMonitor.right - wp->x;
-        wp->cy = mi.rcMonitor.bottom - wp->y;
+        wp->x = wr.left, wp->cx = wr.right - wp->x;
+        wp->y = wr.top, wp->cy = wr.bottom - wp->y;
         return 0;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
