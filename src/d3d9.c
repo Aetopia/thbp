@@ -20,7 +20,7 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
     return g_Reset(this, &d3dpp);
 }
 
-HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
+HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {
     static LARGE_INTEGER last = {};
 
@@ -36,7 +36,11 @@ HRESULT WINAPI Present(PVOID this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
     while (now.QuadPart < last.QuadPart)
         QueryPerformanceCounter(&now);
 
-    return g_Present(this, src, dst, g_Wnd, rgn);
+    D3DVIEWPORT9 vp = {};
+    this->lpVtbl->GetViewport(this, &vp);
+
+    RECT rc = {vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height};
+    return g_Present(this, &rc, NULL, g_Wnd, NULL);
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,

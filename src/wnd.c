@@ -72,14 +72,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
 
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        RECT wr = g_Windowed ? mi.rcWork : mi.rcMonitor;
+        PRECT wr = g_Windowed ? &mi.rcWork : &mi.rcMonitor;
 
         wp->flags &= ~SWP_NOMOVE;
         wp->flags &= ~SWP_NOSIZE;
         wp->flags |= SWP_DRAWFRAME;
 
-        wp->x = wr.left, wp->cx = wr.right - wp->x;
-        wp->y = wr.top, wp->cy = wr.bottom - wp->y;
+        wp->x = wr->left, wp->cx = wr->right - wp->x;
+        wp->y = wr->top, wp->cy = wr->bottom - wp->y;
         return 0;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
