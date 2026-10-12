@@ -35,6 +35,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
 
         RegisterClassW(&wc);
         DwmEnableMMCSS(TRUE);
+        CreateHook(ShowCursor, _);
 
         QueryPerformanceFrequency(&g_Ticks);
         g_Ticks.QuadPart = MFllMulDiv(g_Ticks.QuadPart, 1, 60, 0);

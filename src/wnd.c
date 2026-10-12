@@ -1,5 +1,4 @@
 #include <windef.h>
-#include <wingdi.h>
 #include <winuser.h>
 #include <winbase.h>
 
@@ -29,9 +28,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_SETCURSOR:
     case WM_NCACTIVATE:
-        while (ShowCursor(TRUE) < 0)
-            continue;
-
         if (!g_Windowed && hWnd == GetForegroundWindow())
         {
             SetCursor(NULL);

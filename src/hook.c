@@ -1,6 +1,11 @@
 #include <memoryapi.h>
 #include <processthreadsapi.h>
 
+INT WINAPI _(BOOL _)
+{
+    return _ ? 1 : -1;
+}
+
 PVOID CreateHook(PVOID src, PVOID dst)
 {
     struct __attribute((packed))
