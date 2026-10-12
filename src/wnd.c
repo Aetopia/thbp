@@ -45,7 +45,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case GWL_STYLE:
-            ss->styleNew = WS_VISIBLE * IsWindowVisible(hWnd);
+            ss->styleNew = WS_CLIPCHILDREN;
+            ss->styleNew |= WS_VISIBLE * IsWindowVisible(hWnd);
             ss->styleNew |= g_Windowed ? (WS_CAPTION | WS_SYSMENU) : WS_POPUP;
             break;
         }
