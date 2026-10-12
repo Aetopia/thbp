@@ -11,9 +11,13 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
-    g_Windowed = d3dpp.Windowed;
 
+    g_Windowed = d3dpp.Windowed;
     d3dpp.Windowed = TRUE;
+
+    d3dpp.BackBufferCount = 0;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+
     d3dpp.FullScreen_RefreshRateInHz = 0;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
@@ -47,7 +51,15 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
     D3DPRESENT_PARAMETERS d3dpp = *params;
+
     g_Windowed = d3dpp.Windowed;
+    d3dpp.Windowed = TRUE;
+
+    d3dpp.BackBufferCount = 0;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+
+    d3dpp.FullScreen_RefreshRateInHz = 0;
+    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
     if (!IsWindow(g_Wnd))
     {
@@ -62,10 +74,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
     }
-
-    d3dpp.Windowed = TRUE;
-    d3dpp.FullScreen_RefreshRateInHz = 0;
-    d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &d3dpp, device);
 
