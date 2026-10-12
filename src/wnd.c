@@ -45,41 +45,35 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case GWL_STYLE:
-            ss->styleNew = WS_CLIPCHILDREN;
-            ss->styleNew |= WS_VISIBLE * IsWindowVisible(hWnd);
-            ss->styleNew |= g_Windowed ? (WS_CAPTION | WS_SYSMENU) : WS_POPUP;
+            ss->styleNew = WS_POPUP | (WS_VISIBLE * IsWindowVisible(hWnd));
+            ss->styleNew |= WS_CLIPCHILDREN | (g_Windowed * (WS_CAPTION | WS_SYSMENU));
             break;
         }
         break;
 
     case WM_WINDOWPOSCHANGED:
-        RECT cr = {};
-        GetClientRect(hWnd, &cr);
+        RECT rc = {};
+        GetClientRect(hWnd, &rc);
 
-        INT cx = cr.right;
+        INT cx = rc.right;
         INT cy = MulDiv(cx, g_Height, g_Width);
 
-        if (cy > cr.bottom)
+        if (cy > rc.bottom)
         {
-            cy = cr.bottom;
+            cy = rc.bottom;
             cx = MulDiv(cy, g_Width, g_Height);
         }
 
-        INT x = (cr.right - cx) / 2;
-        INT y = (cr.bottom - cy) / 2;
+        INT x = (rc.right - cx) / 2;
+        INT y = (rc.bottom - cy) / 2;
 
         SetWindowPos(g_Wnd, NULL, x, y, cx, cy, 0);
         break;
 
     case WM_WINDOWPOSCHANGING:
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        RECT wr = {wp->x, wp->y, wp->x + wp->cx, wp->y + wp->cy};
-
-        wr.left *= g_Windowed, wr.top *= g_Windowed;
-        wr.right *= g_Windowed, wr.bottom *= g_Windowed;
-
         MONITORINFO mi = {sizeof(MONITORINFO)};
-        GetMonitorInfoW(MonitorFromRect(&wr, MONITOR_DEFAULTTOPRIMARY), &mi);
+        GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
 
         wp->flags &= ~SWP_NOMOVE;
         wp->flags &= ~SWP_NOSIZE;
@@ -87,7 +81,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         wp->y = mi.rcMonitor.top;
         wp->x = mi.rcMonitor.left;
-
         wp->cx = mi.rcMonitor.right - wp->x;
         wp->cy = mi.rcMonitor.bottom - wp->y;
         break;

@@ -59,7 +59,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
         SetWindowLongW(wnd, GWL_STYLE, WS_OVERLAPPED);
 
-        SetClassLongW(wnd, GCLP_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
     }
 
