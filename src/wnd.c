@@ -13,12 +13,12 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-    case WM_SIZE:
     case WM_ERASEBKGND:
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 
+    case WM_SIZE:
     case WM_SYSCOMMAND:
-        if (GET_SC_WPARAM(wParam) != SC_CLOSE)
+        if (uMsg == WM_SIZE || GET_SC_WPARAM(wParam) != SC_CLOSE)
             return 0;
         break;
 
@@ -45,7 +45,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ss->styleNew |= WS_CLIPCHILDREN | (g_Windowed * (WS_CAPTION | WS_SYSMENU));
             break;
         }
-        break;
+        return 0;
 
     case WM_WINDOWPOSCHANGED:
         RECT rc = {};
@@ -64,7 +64,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         INT y = (rc.bottom - cy) / 2;
 
         SetWindowPos(g_Wnd, NULL, x, y, cx, cy, 0);
-        break;
+        return 0;
 
     case WM_WINDOWPOSCHANGING:
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
@@ -79,7 +79,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         wp->x = mi.rcMonitor.left;
         wp->cx = mi.rcMonitor.right - wp->x;
         wp->cy = mi.rcMonitor.bottom - wp->y;
-        break;
+        return 0;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
 }
