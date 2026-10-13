@@ -48,8 +48,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         dinput8->lpVtbl->CreateDevice(dinput8, &GUID_SysMouseEm, &device, NULL);
 
         CreateHook(ShowCursor, $ShowCursor);
-        g_EnumDisplaySettingsA = CreateHook(EnumDisplaySettingsA, $EnumDisplaySettingsA);
-        g_EnumDisplaySettingsW = CreateHook(EnumDisplaySettingsW, $EnumDisplaySettingsW);
+        CreateHook(EnumDisplaySettingsW, $EnumDisplaySettingsW);
 
         g_CreateDevice = CreateHook(d3d9->lpVtbl->CreateDevice, CreateDevice);
         g_SetCooperativeLevel = CreateHook(device->lpVtbl->SetCooperativeLevel, SetCooperativeLevel);

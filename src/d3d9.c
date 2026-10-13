@@ -22,8 +22,7 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 
 HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {
-    static LARGE_INTEGER last = {};
-    static LARGE_INTEGER ticks = {};
+    static LARGE_INTEGER last = {}, ticks = {};
 
     if (!ticks.QuadPart)
     {
