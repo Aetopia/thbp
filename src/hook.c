@@ -1,4 +1,7 @@
-#include <windows.h>
+#include <windef.h>
+#include <wingdi.h>
+#include <memoryapi.h>
+#include <processthreadsapi.h>
 
 BOOL WINAPI (*g_EnumDisplaySettingsW)(PVOID, DWORD, PVOID) = {};
 BOOL WINAPI (*g_EnumDisplaySettingsA)(PVOID, DWORD, PVOID) = {};

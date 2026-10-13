@@ -1,8 +1,9 @@
-#include <windows.h>
+#include <windef.h>
+#include <winuser.h>
+#include <winbase.h>
 
-BOOL g_Windowed = {};
-
-HWND g_Wnd = {};
+HWND g_Window = {};
+BOOL g_FullScreen = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -20,7 +21,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_SETCURSOR:
     case WM_NCACTIVATE:
-        if (!g_Windowed && hWnd == GetForegroundWindow())
+        if (g_FullScreen && hWnd == GetForegroundWindow())
         {
             SetCursor(NULL);
             if (uMsg == WM_SETCURSOR)
@@ -38,10 +39,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case GWL_STYLE:
             ss->styleNew = WS_VISIBLE & ss->styleOld;
-            ss->styleNew |= WS_POPUP | WS_CLIPCHILDREN;
+            ss->styleNew |= WS_CLIPCHILDREN | WS_POPUP;
 
-            if (g_Windowed)
-                ss->styleNew |= WS_CAPTION | WS_SYSMENU;
+            ss->styleNew |= !g_FullScreen * WS_CAPTION;
+            ss->styleNew |= !g_FullScreen * WS_SYSMENU;
             break;
         }
         return 0;
@@ -62,7 +63,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         INT x = (cr.right - cx) / 2;
         INT y = (cr.bottom - cy) / 2;
 
-        SetWindowPos(g_Wnd, NULL, x, y, cx, cy, 0);
+        SetWindowPos(g_Window, NULL, x, y, cx, cy, SWP_SHOWWINDOW);
         return 0;
 
     case WM_WINDOWPOSCHANGING:
@@ -70,7 +71,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
 
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        PRECT wr = g_Windowed ? &mi.rcWork : &mi.rcMonitor;
+        PRECT wr = g_FullScreen ? &mi.rcMonitor : &mi.rcWork;
 
         wp->flags &= ~SWP_NOMOVE;
         wp->flags &= ~SWP_NOSIZE;

@@ -1,8 +1,8 @@
-#include "d3d9.c"
-#include <mfapi.h>
 #include <dwmapi.h>
 #include <dinput.h>
 #include <dinputd.h>
+
+#include "d3d9.c"
 
 HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
 HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, LPCVOID, PVOID, PVOID) = {};
@@ -34,9 +34,6 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         });
         DwmEnableMMCSS(TRUE);
 
-        QueryPerformanceFrequency(&g_Ticks);
-        g_Ticks.QuadPart = MFllMulDiv(g_Ticks.QuadPart, 1, 60, 0);
-
         WCHAR path[MAX_PATH] = {};
         GetSystemDirectoryW(path, MAX_PATH);
 
@@ -47,7 +44,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         LPDIRECTINPUTDEVICE8W device = {};
         LPDIRECT3D9 d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
-        g_DirectInput8Create(instance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (PVOID)&dinput8, NULL);
+        DirectInput8Create(instance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (PVOID)&dinput8, NULL);
         dinput8->lpVtbl->CreateDevice(dinput8, &GUID_SysMouseEm, &device, NULL);
 
         CreateHook(ShowCursor, $ShowCursor);
