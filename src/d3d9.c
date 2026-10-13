@@ -70,10 +70,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
         SetWindowLongW(wnd, GWL_STYLE, 0);
         SetWindowLongW(wnd, GWL_EXSTYLE, 0);
-
-        HBRUSH hbr = GetStockObject(BLACK_BRUSH);
-        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)hbr);
-
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_SHOWWINDOW);
     }
 
