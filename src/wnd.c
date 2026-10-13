@@ -77,8 +77,11 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         wp->flags &= ~SWP_NOSIZE;
         wp->flags |= SWP_DRAWFRAME;
 
-        wp->x = wr->left, wp->cx = wr->right - wp->x;
-        wp->y = wr->top, wp->cy = wr->bottom - wp->y;
+        wp->x = wr->left;
+        wp->y = wr->top;
+
+        wp->cx = wr->right - wp->x;
+        wp->cy = wr->bottom - wp->y;
         return 0;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);

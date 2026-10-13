@@ -34,16 +34,14 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     LARGE_INTEGER now = {};
     QueryPerformanceCounter(&now);
 
-    if ((last = last.QuadPart ? last : now).QuadPart)
-    {
-        last.QuadPart += ticks.QuadPart;
+    last = last.QuadPart ? last : now;
+    last.QuadPart += ticks.QuadPart;
 
-        if (last.QuadPart < now.QuadPart)
-            last = now;
+    if (last.QuadPart < now.QuadPart)
+        last = now;
 
-        while (now.QuadPart < last.QuadPart)
-            QueryPerformanceCounter(&now);
-    }
+    while (now.QuadPart < last.QuadPart)
+        QueryPerformanceCounter(&now);
 
     D3DVIEWPORT9 vp = {};
     this->lpVtbl->GetViewport(this, &vp);
@@ -79,7 +77,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_SHOWWINDOW);
     }
 
-    flags |= D3DCREATE_MULTITHREADED | D3DCREATE_NOWINDOWCHANGES;
+    flags |= D3DCREATE_NOWINDOWCHANGES;
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &pp, device);
 
     if (SUCCEEDED(hr) && !g_Present && !g_Reset)
