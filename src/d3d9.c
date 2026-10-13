@@ -79,6 +79,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_SHOWWINDOW);
     }
 
+    flags |= D3DCREATE_MULTITHREADED | D3DCREATE_NOWINDOWCHANGES;
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &pp, device);
 
     if (SUCCEEDED(hr) && !g_Present && !g_Reset)
