@@ -39,16 +39,16 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     if (last.QuadPart < now.QuadPart)
         last = now;
 
-    while (now.QuadPart < last.QuadPart)
+    do
+    {
+        _mm_pause();
         QueryPerformanceCounter(&now);
+    } while (now.QuadPart < last.QuadPart);
 
     D3DVIEWPORT9 vp = {};
     this->lpVtbl->GetViewport(this, &vp);
 
-    RECT rc = {vp.X, vp.Y};
-    rc.right = vp.X + vp.Width;
-    rc.bottom = vp.Y + vp.Height;
-
+    RECT rc = {vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height};
     return g_Present(this, &rc, NULL, g_Window, NULL);
 }
 
