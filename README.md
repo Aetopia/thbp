@@ -36,8 +36,8 @@ https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
 ## Usage
 
 > [!IMPORTANT]
-> - The patch will promote fullscreen to borderless.
 > - Use the highest available resolution when playing.
+> - The patch will promote any screen mode to borderless.
 
 - [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of `thbp`.
 - Locate a supported game on your system.

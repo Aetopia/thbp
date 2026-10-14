@@ -10,12 +10,14 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
-    g_FullScreen = !params->Windowed;
-
     D3DPRESENT_PARAMETERS pp = *params;
-    pp.Windowed = pp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    pp.BackBufferCount = pp.FullScreen_RefreshRateInHz = 0;
     pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+
+    pp.Windowed = TRUE;
+    pp.FullScreen_RefreshRateInHz = 0;
+
+    pp.BackBufferCount = 0;
+    pp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 
     return g_Reset(this, &pp);
 }
@@ -37,7 +39,7 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     last.QuadPart += ticks.QuadPart;
 
     if (last.QuadPart < now.QuadPart)
-        last = now;
+        last.QuadPart = now.QuadPart;
 
     do
     {
@@ -55,21 +57,25 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
-    g_FullScreen = !params->Windowed;
-
     D3DPRESENT_PARAMETERS pp = *params;
-    pp.Windowed = pp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    pp.BackBufferCount = pp.FullScreen_RefreshRateInHz = 0;
     pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+
+    pp.Windowed = TRUE;
+    pp.FullScreen_RefreshRateInHz = 0;
+
+    pp.BackBufferCount = 0;
+    pp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 
     if (!IsWindow(g_Window))
     {
         g_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG)WndProc);
-        g_Window = CreateWindowExW(0, L" ", 0, WS_CHILD, 0, 0, 0, 0, wnd, 0, 0, 0);
+        g_Window = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
-        SetWindowLongW(wnd, GWL_STYLE, 0);
-        SetWindowLongW(wnd, GWL_EXSTYLE, 0);
-        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_SHOWWINDOW);
+        SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
+        SetWindowLongW(wnd, GWL_STYLE, WS_OVERLAPPED);
+
+        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
+        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
     }
 
     flags |= D3DCREATE_NOWINDOWCHANGES;
