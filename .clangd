@@ -3,10 +3,10 @@ CompileFlags:
     - '-std=c23'
     - '-municode'
     - '--target=i686-w64-windows-gnu'
+  
     - '-DINITGUID'
     - '-DWINVER=NTDDI_WIN10'
     - '-DWIN32_LEAN_AND_MEAN'
 
 Diagnostics:
-  Suppress: 
-    - 'dll-attribute-on-redeclaration'
+  Suppress: ['dll-attribute-on-redeclaration']

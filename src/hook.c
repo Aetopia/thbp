@@ -7,14 +7,14 @@ BOOL WINAPI (*g_EnumDisplaySettingsW)(PVOID, DWORD, PVOID) = {};
 
 BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
 {
-    if (g_EnumDisplaySettingsW(name, idx, dm))
-    {
-        dm->dmPelsWidth = 1280;
-        dm->dmPelsHeight = 960;
-        dm->dmDisplayFrequency = 60;
-        return TRUE;
-    }
-    return FALSE;
+    if (!g_EnumDisplaySettingsW(name, idx, dm))
+        return FALSE;
+
+    dm->dmPelsWidth = 1280;
+    dm->dmPelsHeight = 960;
+    dm->dmDisplayFrequency = 60;
+
+    return TRUE;
 }
 
 PVOID CreateHook(PVOID src, PVOID dst)
