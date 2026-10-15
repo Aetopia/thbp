@@ -3,6 +3,7 @@
 #include <winbase.h>
 
 HWND g_Window = {};
+BOOL g_FullScreen = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -13,13 +14,11 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_ERASEBKGND:
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 
-    case WM_NCACTIVATE:
-        if (hWnd == GetForegroundWindow())
-            SetCursor(NULL);
-        break;
-
     case WM_SETCURSOR:
-        if (hWnd == GetForegroundWindow())
+        while (ShowCursor(TRUE) < 0)
+            _mm_pause();
+
+        if (g_FullScreen && hWnd == GetForegroundWindow())
         {
             SetCursor(NULL);
             return TRUE;
@@ -35,8 +34,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case GWL_STYLE:
-            ss->styleNew = WS_VISIBLE & ss->styleOld;
-            ss->styleNew |= WS_CLIPCHILDREN | WS_POPUP;
+            ss->styleNew = WS_VISIBLE & ss->styleOld | WS_CLIPCHILDREN;
+            ss->styleNew |= g_FullScreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
             break;
         }
         return 0;
@@ -58,22 +57,20 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         INT y = (rc.bottom - cy) / 2;
 
         SetWindowPos(g_Window, NULL, x, y, cx, cy, SWP_SHOWWINDOW);
-        return 0;
 
-    case WM_WINDOWPOSCHANGING:
-        MONITORINFO mi = {sizeof(MONITORINFO)};
-        GetMonitorInfoW(MonitorFromPoint((POINT){}, MONITOR_DEFAULTTOPRIMARY), &mi);
+        if (g_FullScreen)
+        {
+            MONITORINFO mi = {sizeof(MONITORINFO)};
+            GetMonitorInfoW(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
 
-        PWINDOWPOS wp = (PWINDOWPOS)lParam;
+            INT x = mi.rcMonitor.left;
+            INT y = mi.rcMonitor.top;
 
-        wp->flags &= ~SWP_NOMOVE;
-        wp->flags &= ~SWP_NOSIZE;
+            INT cx = mi.rcMonitor.right - x;
+            INT cy = mi.rcMonitor.bottom - y;
 
-        wp->x = mi.rcMonitor.left;
-        wp->y = mi.rcMonitor.top;
-
-        wp->cx = mi.rcMonitor.right - wp->x;
-        wp->cy = mi.rcMonitor.bottom - wp->y;
+            SetWindowPos(hWnd, NULL, x, y, cx, cy, SWP_NOZORDER);
+        }
         return 0;
     }
     return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);

@@ -10,6 +10,8 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
+    g_FullScreen = !params->Windowed;
+
     D3DPRESENT_PARAMETERS pp = *params;
     pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
@@ -57,6 +59,8 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
+    g_FullScreen = !params->Windowed;
+
     D3DPRESENT_PARAMETERS pp = *params;
     pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
@@ -75,7 +79,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         SetWindowLongW(wnd, GWL_STYLE, WS_OVERLAPPED);
 
         SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
-        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_DRAWFRAME | SWP_SHOWWINDOW);
     }
 
     flags |= D3DCREATE_NOWINDOWCHANGES;

@@ -3,16 +3,18 @@
 #include <memoryapi.h>
 #include <processthreadsapi.h>
 
-INT WINAPI $ShowCursor(BOOL show)
-{
-    return show ? 1 : -1;
-}
+BOOL WINAPI (*g_EnumDisplaySettingsW)(PVOID, DWORD, PVOID) = {};
 
 BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
 {
-    dm->dmPelsWidth = 1280;
-    dm->dmPelsHeight = 960;
-    return TRUE;
+    if (g_EnumDisplaySettingsW(name, idx, dm))
+    {
+        dm->dmPelsWidth = 1280;
+        dm->dmPelsHeight = 960;
+        dm->dmDisplayFrequency = 60;
+        return TRUE;
+    }
+    return FALSE;
 }
 
 PVOID CreateHook(PVOID src, PVOID dst)
