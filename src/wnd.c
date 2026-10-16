@@ -37,12 +37,15 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_STYLECHANGING:
         LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
-        switch (wParam)
+
+        if (wParam == GWL_EXSTYLE)
         {
-        case GWL_EXSTYLE:
             ss->styleNew = WS_EX_LEFT;
-            break;
-        case GWL_STYLE:
+            return 0;
+        }
+
+        if (wParam == GWL_STYLE)
+        {
             ss->styleNew = WS_VISIBLE & ss->styleOld | WS_CLIPCHILDREN;
             ss->styleNew |= g_FullScreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
         }
