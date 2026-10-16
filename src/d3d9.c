@@ -2,7 +2,7 @@
 #include "hook.c"
 
 #include <d3d9.h>
-#include <mfapi.h>
+#include <realtimeapiset.h>
 
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
@@ -26,28 +26,27 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 
 HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {
-    static LARGE_INTEGER last = {}, ticks = {};
+    static HANDLE timer = {};
+    static ULONG64 last = {};
 
-    if (!ticks.QuadPart)
+    if (!timer)
     {
-        QueryPerformanceFrequency(&ticks);
-        ticks.QuadPart = MFllMulDiv(ticks.QuadPart, 1, 60, 0);
+        DWORD access = TIMER_ALL_ACCESS;
+        DWORD flags = CREATE_WAITABLE_TIMER_HIGH_RESOLUTION;
+        timer = CreateWaitableTimerExW(NULL, NULL, flags, access);
     }
 
-    LARGE_INTEGER now = {};
-    QueryPerformanceCounter(&now);
+    ULONG64 now = {};
+    QueryInterruptTimePrecise(&now);
 
-    last = last.QuadPart ? last : now;
-    last.QuadPart += ticks.QuadPart;
+    last = last ? last : now;
+    last += 10'000'000 / 60;
 
-    if (last.QuadPart < now.QuadPart)
-        last.QuadPart = now.QuadPart;
+    last = last < now ? now : last;
+    LONG64 wait = -(last - now);
 
-    do
-    {
-        _mm_pause();
-        QueryPerformanceCounter(&now);
-    } while (now.QuadPart < last.QuadPart);
+    SetWaitableTimer(timer, (PVOID)&wait, 0, NULL, NULL, FALSE);
+    WaitForSingleObject(timer, INFINITE);
 
     D3DVIEWPORT9 vp = {};
     this->lpVtbl->GetViewport(this, &vp);
