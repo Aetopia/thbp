@@ -1,7 +1,10 @@
 CompileFlags:
   Add: 
-    - '-std=c23'
+    - '-Wall'
+    - '-Werror'
+
     - '-municode'
+    - '-std=gnu99'
     - '--target=i686-w64-windows-gnu'
   
     - '-DINITGUID'

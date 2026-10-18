@@ -39,13 +39,11 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     ULONG64 now = {};
     QueryInterruptTimePrecise(&now);
 
-    last = last ? last : now;
-    last += 10'000'000 / 60;
-
+    last = (last ?: now) + 1E7 / 60;
     last = last < now ? now : last;
-    LONG64 wait = -(last - now);
 
-    SetWaitableTimer(timer, (PVOID)&wait, 0, NULL, NULL, FALSE);
+    LARGE_INTEGER wait = {.QuadPart = -(last - now)};
+    SetWaitableTimer(timer, &wait, 0, NULL, NULL, FALSE);
     WaitForSingleObject(timer, INFINITE);
 
     D3DVIEWPORT9 vp = {};
