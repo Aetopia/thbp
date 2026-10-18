@@ -26,25 +26,19 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 
 HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {
-    static HANDLE timer = {};
-    static ULONG64 last = {};
-
-    if (!timer)
-    {
-        DWORD access = TIMER_ALL_ACCESS;
-        DWORD flags = CREATE_WAITABLE_TIMER_HIGH_RESOLUTION;
-        timer = CreateWaitableTimerExW(NULL, NULL, flags, access);
-    }
+    static ULONG64 s_last = {};
 
     ULONG64 now = {};
     QueryInterruptTimePrecise(&now);
 
-    last = (last ?: now) + 1E7 / 60;
-    last = last < now ? now : last;
+    s_last = (s_last ?: now) + 1E7 / 60;
+    s_last = s_last < now ? now : s_last;
 
-    LARGE_INTEGER wait = {.QuadPart = -(last - now)};
-    SetWaitableTimer(timer, &wait, 0, NULL, NULL, FALSE);
-    WaitForSingleObject(timer, INFINITE);
+    do
+    {
+        _mm_pause();
+        QueryInterruptTimePrecise(&now);
+    } while (now < s_last);
 
     D3DVIEWPORT9 vp = {};
     this->lpVtbl->GetViewport(this, &vp);
