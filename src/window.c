@@ -65,8 +65,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_WINDOWPOSCHANGING: {
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
+        wp->flags |= SWP_FRAMECHANGED;
+        
         UINT flags = SWP_NOMOVE | SWP_NOSIZE;
-
         if (g_Windowed || (wp->flags & flags) == flags)
             return 0;
 

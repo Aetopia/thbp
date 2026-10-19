@@ -13,13 +13,9 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
     g_Windowed = params->Windowed;
 
     D3DPRESENT_PARAMETERS pp = *params;
+    pp.Windowed = pp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    pp.BackBufferCount = pp.FullScreen_RefreshRateInHz = 0;
     pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
-    pp.Windowed = TRUE;
-    pp.FullScreen_RefreshRateInHz = 0;
-
-    pp.BackBufferCount = 0;
-    pp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 
     return g_Reset(this, &pp);
 }
@@ -53,13 +49,9 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
     g_Windowed = params->Windowed;
 
     D3DPRESENT_PARAMETERS pp = *params;
+    pp.Windowed = pp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    pp.BackBufferCount = pp.FullScreen_RefreshRateInHz = 0;
     pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-
-    pp.Windowed = TRUE;
-    pp.FullScreen_RefreshRateInHz = 0;
-
-    pp.BackBufferCount = 0;
-    pp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 
     if (!IsWindow(g_Window))
     {
@@ -69,13 +61,8 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
         SetWindowLongW(wnd, GWL_STYLE, WS_OVERLAPPED);
 
-        HBRUSH hbr = GetStockObject(BLACK_BRUSH);
-        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)hbr);
-
-        UINT flags = SWP_FRAMECHANGED | SWP_SHOWWINDOW;
-        flags |= params->Windowed * (SWP_NOMOVE | SWP_NOSIZE);
-
-        SetWindowPos(wnd, NULL, 0, 0, 0, 0, flags);
+        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
+        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_SHOWWINDOW | g_Windowed * (SWP_NOMOVE | SWP_NOSIZE));
     }
 
     flags |= D3DCREATE_NOWINDOWCHANGES;
