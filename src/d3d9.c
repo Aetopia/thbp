@@ -72,7 +72,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         flags |= g_Windowed * SWP_NOSIZE;
 
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, flags);
-        !g_Windowed ?: ShowWindow(wnd, SW_MAXIMIZE);
     }
 
     flags |= D3DCREATE_NOWINDOWCHANGES;

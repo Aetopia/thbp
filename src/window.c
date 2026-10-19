@@ -16,10 +16,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
-    case WM_DISPLAYCHANGE: {
-        g_Windowed ?: SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOZORDER);
-        break;
-    }
     case WM_SETCURSOR: {
         if (g_Windowed || hWnd != GetForegroundWindow())
             return DefWindowProcW(hWnd, uMsg, wParam, lParam);
