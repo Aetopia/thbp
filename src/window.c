@@ -3,7 +3,7 @@
 #include <winbase.h>
 
 HWND g_Window = {};
-BOOL g_FullScreen = {};
+BOOL g_Windowed = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -27,7 +27,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         while (ShowCursor(TRUE) < 0)
             _mm_pause();
 
-        if (!g_FullScreen || hWnd != GetForegroundWindow())
+        if (g_Windowed || hWnd != GetForegroundWindow())
             return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 
         SetCursor(NULL);
@@ -45,7 +45,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (wParam == GWL_STYLE)
         {
             ss->styleNew = (WS_VISIBLE & ss->styleOld) | WS_CLIPCHILDREN;
-            ss->styleNew |= g_FullScreen ? WS_POPUP : WS_OVERLAPPEDWINDOW;
+            ss->styleNew |= g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
         }
         return 0;
     }
@@ -72,7 +72,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
         UINT flags = SWP_NOMOVE | SWP_NOSIZE;
 
-        if (!g_FullScreen || (wp->flags & flags) == flags)
+        if (g_Windowed || (wp->flags & flags) == flags)
             return 0;
 
         MONITORINFO mi = {sizeof(MONITORINFO)};
