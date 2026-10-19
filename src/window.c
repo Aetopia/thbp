@@ -10,7 +10,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-    case WM_SIZE:
+    case WM_SIZE: {
+        return 0;
+    }
     case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
@@ -30,17 +32,17 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_STYLECHANGING: {
         LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
-
-        if (wParam == GWL_EXSTYLE)
+        switch (wParam)
         {
+        case GWL_EXSTYLE: {
             ss->styleNew = WS_EX_LEFT;
-            return 0;
+            break;
         }
-
-        if (wParam == GWL_STYLE)
-        {
-            ss->styleNew = (WS_VISIBLE & ss->styleOld) | WS_CLIPCHILDREN;
-            ss->styleNew |= g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
+        case GWL_STYLE: {
+            ss->styleNew = g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
+            ss->styleNew |= (WS_VISIBLE & ss->styleOld) | WS_CLIPCHILDREN;
+            break;
+        }
         }
         return 0;
     }
@@ -66,22 +68,22 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_WINDOWPOSCHANGING: {
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
         wp->flags |= SWP_FRAMECHANGED;
-        
-        UINT flags = SWP_NOMOVE | SWP_NOSIZE;
-        if (g_Windowed || (wp->flags & flags) == flags)
+
+        if (g_Windowed || (wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE))
             return 0;
 
         MONITORINFO mi = {sizeof(MONITORINFO)};
         RECT rc = {wp->x, wp->y, wp->x + wp->cx, wp->y + wp->cy};
         GetMonitorInfoW(MonitorFromRect(&rc, MONITOR_DEFAULTTONEAREST), &mi);
 
+        wp->flags &= ~SWP_NOMOVE;
+        wp->flags &= ~SWP_NOSIZE;
+
         wp->x = mi.rcMonitor.left;
         wp->y = mi.rcMonitor.top;
 
         wp->cx = mi.rcMonitor.right - wp->x;
         wp->cy = mi.rcMonitor.bottom - wp->y;
-
-        wp->flags &= ~flags;
         return 0;
     }
     }
