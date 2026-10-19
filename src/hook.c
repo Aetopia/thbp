@@ -3,17 +3,15 @@
 #include <memoryapi.h>
 #include <processthreadsapi.h>
 
-BOOL WINAPI (*g_EnumDisplaySettingsW)(PVOID, DWORD, PVOID) = {};
+INT WINAPI $ShowCursor(BOOL show)
+{
+    return show ? 0 : -1;
+}
 
 BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
 {
-    if (!g_EnumDisplaySettingsW(name, idx, dm))
-        return FALSE;
-
     dm->dmPelsWidth = 1280;
     dm->dmPelsHeight = 960;
-    dm->dmDisplayFrequency = 60;
-
     return TRUE;
 }
 
