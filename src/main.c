@@ -1,4 +1,3 @@
-#include <dwmapi.h>
 #include <dinput.h>
 #include <dinputd.h>
 

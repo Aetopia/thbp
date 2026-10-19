@@ -1,4 +1,5 @@
 #include <d3d9.h>
+#include <dwmapi.h>
 #include <realtimeapiset.h>
 
 #include "hook.c"
@@ -40,7 +41,9 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     this->lpVtbl->GetViewport(this, &vp);
 
     RECT rc = {vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height};
-    return g_Present(this, &rc, NULL, g_Window, NULL);
+    HRESULT hr = g_Present(this, &rc, NULL, g_Window, NULL);
+
+    return DwmFlush(), hr;
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
