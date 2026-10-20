@@ -2,9 +2,10 @@
 #include <winuser.h>
 #include <winbase.h>
 
-HWND g_Window = {};
-BOOL g_Windowed = {};
-WNDPROC g_WndProc = {};
+DWORD _tls_index = {};
+__thread HWND t_Child = {};
+__thread BOOL t_Windowed = {};
+__thread WNDPROC t_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -17,7 +18,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_SETCURSOR: {
-        if (g_Windowed || hWnd != GetForegroundWindow())
+        if (t_Windowed || hWnd != GetForegroundWindow())
             return DefWindowProcW(hWnd, uMsg, wParam, lParam);
         return SetCursor(NULL), TRUE;
     }
@@ -39,7 +40,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
         }
         case GWL_STYLE: {
-            ss->styleNew = g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
+            ss->styleNew = t_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
             ss->styleNew |= (WS_VISIBLE & ss->styleOld) | WS_CLIPCHILDREN;
             break;
         }
@@ -62,14 +63,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         INT x = (rc.right - cx) / 2;
         INT y = (rc.bottom - cy) / 2;
 
-        SetWindowPos(g_Window, NULL, x, y, cx, cy, SWP_SHOWWINDOW);
+        SetWindowPos(t_Child, NULL, x, y, cx, cy, SWP_SHOWWINDOW);
         return 0;
     }
     case WM_WINDOWPOSCHANGING: {
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
         wp->flags |= SWP_FRAMECHANGED;
 
-        if (g_Windowed || (wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE))
+        if (t_Windowed || (wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE))
             return 0;
 
         MONITORINFO mi = {sizeof(MONITORINFO)};
@@ -87,5 +88,5 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     }
-    return CallWindowProcW(g_WndProc, hWnd, uMsg, wParam, lParam);
+    return CallWindowProcW(t_WndProc, hWnd, uMsg, wParam, lParam);
 }

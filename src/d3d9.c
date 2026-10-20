@@ -11,7 +11,7 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 {
-    g_Windowed = params->Windowed;
+    t_Windowed = params->Windowed;
 
     D3DPRESENT_PARAMETERS pp = *params;
     pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -45,7 +45,7 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     this->lpVtbl->GetViewport(this, &vp);
 
     RECT rc = {vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height};
-    HRESULT hr = g_Present(this, &rc, NULL, g_Window, NULL);
+    HRESULT hr = g_Present(this, &rc, NULL, t_Child, NULL);
 
     return DwmFlush(), hr;
 }
@@ -53,7 +53,7 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *params, LPDIRECT3DDEVICE9 *device)
 {
-    g_Windowed = params->Windowed;
+    t_Windowed = params->Windowed;
 
     D3DPRESENT_PARAMETERS pp = *params;
     pp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -64,10 +64,10 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
     pp.BackBufferCount = 0;
     pp.SwapEffect = D3DSWAPEFFECT_COPY;
 
-    if (!IsWindow(g_Window))
+    if (!IsWindow(t_Child))
     {
-        g_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG)WndProc);
-        g_Window = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
+        t_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG)WndProc);
+        t_Child = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
         SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
         SetWindowLongW(wnd, GWL_STYLE, WS_OVERLAPPED);
@@ -76,8 +76,8 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)hbr);
 
         UINT flags = SWP_SHOWWINDOW;
-        flags |= g_Windowed * SWP_NOMOVE;
-        flags |= g_Windowed * SWP_NOSIZE;
+        flags |= t_Windowed * SWP_NOMOVE;
+        flags |= t_Windowed * SWP_NOSIZE;
 
         SetWindowPos(wnd, NULL, 0, 0, 0, 0, flags);
     }
