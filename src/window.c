@@ -2,7 +2,6 @@
 #include <winuser.h>
 #include <winbase.h>
 
-DWORD _tls_index = {};
 __thread HWND t_Child = {};
 __thread BOOL t_Windowed = {};
 __thread WNDPROC t_WndProc = {};

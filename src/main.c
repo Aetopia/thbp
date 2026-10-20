@@ -3,6 +3,8 @@
 
 #include "d3d9.c"
 
+DWORD _tls_index = {};
+
 HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
 HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, LPCVOID, PVOID, PVOID) = {};
 
