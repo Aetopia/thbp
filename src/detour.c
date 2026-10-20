@@ -1,21 +1,26 @@
 #include <windef.h>
 #include <wingdi.h>
+#include <winuser.h>
 #include <memoryapi.h>
 #include <processthreadsapi.h>
 
-INT WINAPI $ShowCursor(BOOL show)
+INT WINAPI $ShowCursor(BOOL _)
 {
-    return show ? 0 : -1;
+    return _ ? 0 : -1;
 }
 
 BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
 {
+    if (!EnumDisplaySettingsExW(name, idx, dm, 0))
+        return FALSE;
+
     dm->dmPelsWidth = 1280;
     dm->dmPelsHeight = 960;
+
     return TRUE;
 }
 
-PVOID CreateHook(PVOID src, PVOID dst)
+PVOID CreateDetour(PVOID src, PVOID dst)
 {
     struct __attribute((packed))
     {

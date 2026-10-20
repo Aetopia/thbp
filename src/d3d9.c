@@ -2,7 +2,7 @@
 #include <dwmapi.h>
 #include <realtimeapiset.h>
 
-#include "hook.c"
+#include "detour.c"
 #include "window.c"
 
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
@@ -87,8 +87,8 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
 
     if (SUCCEEDED(hr) && !g_Present && !g_Reset)
     {
-        g_Reset = CreateHook((*device)->lpVtbl->Reset, Reset);
-        g_Present = CreateHook((*device)->lpVtbl->Present, Present);
+        g_Reset = CreateDetour((*device)->lpVtbl->Reset, Reset);
+        g_Present = CreateDetour((*device)->lpVtbl->Present, Present);
     }
 
     return hr;
