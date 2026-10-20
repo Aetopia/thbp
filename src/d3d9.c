@@ -5,8 +5,6 @@
 #include "hook.c"
 #include "window.c"
 
-__thread ULONG64 t_Last = {};
-
 HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
@@ -29,17 +27,19 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *params)
 
 HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
 {
+    static __thread ULONG64 t_last = {};
+
     ULONG64 now = {};
     QueryInterruptTimePrecise(&now);
 
-    t_Last = (t_Last ?: now) + 1E7 / 60;
-    t_Last = t_Last < now ? now : t_Last;
+    t_last = (t_last ?: now) + 1E7 / 60;
+    t_last = t_last < now ? now : t_last;
 
     do
     {
         _mm_pause();
         QueryInterruptTimePrecise(&now);
-    } while (now < t_Last);
+    } while (now < t_last);
 
     D3DVIEWPORT9 vp = {};
     this->lpVtbl->GetViewport(this, &vp);
