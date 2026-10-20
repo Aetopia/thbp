@@ -1,3 +1,4 @@
+#include <dwmapi.h>
 #include <dinput.h>
 #include <dinputd.h>
 
@@ -46,6 +47,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         DirectInput8Create(instance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (PVOID)&dinput8, NULL);
         dinput8->lpVtbl->CreateDevice(dinput8, &GUID_SysMouseEm, &device, NULL);
 
+        CreateDetour(Sleep, $Sleep);
         CreateDetour(ShowCursor, $ShowCursor);
         CreateDetour(EnumDisplaySettingsW, $EnumDisplaySettingsW);
 

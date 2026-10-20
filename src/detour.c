@@ -1,8 +1,14 @@
 #include <windef.h>
 #include <wingdi.h>
 #include <winuser.h>
+#include <synchapi.h>
 #include <memoryapi.h>
 #include <processthreadsapi.h>
+
+VOID WINAPI $Sleep(DWORD _)
+{
+    SleepEx(_ ? 1 : 0, FALSE);
+}
 
 INT WINAPI $ShowCursor(BOOL _)
 {
