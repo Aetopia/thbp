@@ -11,7 +11,7 @@ Adds resizable window & borderless fullscreen support to Touhou.
 
 > [!CAUTION]
 > All games prior to Touhou 10 aren't supported due to D3D8.
-> - To fix this, install [`d3d8to9`](https://github.com/crosire/d3d8to9) to promote D3D9.
+> - To fix this, install [`d3d8to9`](https://github.com/crosire/d3d8to9/releases/latest) to promote D3D9.
 > - Any games that use D3D8 will now be compatible. 
 
 - Touhou 9
@@ -28,7 +28,7 @@ https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
 </div>
 
 ### Tweaks
-- A framerate limiter that paces everything at 60 FPS.
+- The presentation rate is constrained to 60 FPS on purpose.
 - [High DPI Awareness is enabled](https://learn.microsoft.com/windows/win32/hidpi/high-dpi-desktop-application-development-on-windows) to avoid bitmap stretching.
 - Desktop Window Manager opts in for [MMCSS scheduling](https://github.com/djdallmann/GamingPCSetup/blob/master/CONTENT/RESEARCH/WINSERVICES/README.md#q-can-you-take-advantage-of-the-mmcss-boosted-csrss-and-dwm-thread-priorities-dwmenablemmcss-while-using-a-fullscreen-exclusive-application).
 - DirectInput no longer [blocks the Windows key](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee417921(v=vs.85)) when in use.
@@ -46,7 +46,7 @@ https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
 
 - [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of `thbp`.
 - Locate a supported game on your system.
-- Place `dinput8.dll` in the install folder.
+- Place `dinput8.dll` in the game's install folder.
 
 ## Build
 1. Install [MinGW (x86)](https://www.mingw-w64.org) on your system.
