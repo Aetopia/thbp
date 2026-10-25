@@ -1,6 +1,6 @@
 # Touhou Borderless Patch
 
-Adds resizable window & borderless fullscreen support to Touhou.
+Adds resizable window & borderless fullscreen support to Touhou games.
 
 ## Games
 
