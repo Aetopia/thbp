@@ -57,19 +57,13 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
     if (!IsWindow(t_Child))
     {
         t_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG)WndProc);
-        t_Child = CreateWindowExW(WS_EX_LEFT, L" ", NULL, WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
+        t_Child = CreateWindowExW(0, L" ", NULL, WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
-        SetWindowLongW(wnd, GWL_EXSTYLE, WS_EX_LEFT);
-        SetWindowLongW(wnd, GWL_STYLE, WS_OVERLAPPED);
+        SetWindowLongW(wnd, GWL_STYLE, 0), SetWindowLongW(wnd, GWL_EXSTYLE, 0);
+        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
 
-        HBRUSH hbr = GetStockObject(BLACK_BRUSH);
-        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)hbr);
-
-        UINT flags = SWP_SHOWWINDOW;
-        flags |= t_Windowed * SWP_NOMOVE;
-        flags |= t_Windowed * SWP_NOSIZE;
-
-        SetWindowPos(wnd, NULL, 0, 0, 0, 0, flags);
+        RedrawWindow(wnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
+        SetWindowPos(wnd, NULL, 0, 0, 0, 0, t_Windowed * (SWP_NOMOVE | SWP_NOSIZE));
     }
 
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &cp, device);

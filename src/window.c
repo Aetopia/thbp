@@ -10,9 +10,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-    case WM_SIZE: {
-        return 0;
-    }
+    case WM_SIZE:
+    case WM_PAINT:
     case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
@@ -35,12 +34,12 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         switch (wParam)
         {
         case GWL_EXSTYLE: {
-            ss->styleNew = WS_EX_LEFT;
+            ss->styleNew = 0;
             break;
         }
         case GWL_STYLE: {
-            ss->styleNew = t_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
-            ss->styleNew |= (WS_VISIBLE & ss->styleOld) | WS_CLIPCHILDREN;
+            ss->styleNew = WS_VISIBLE | WS_CLIPCHILDREN;
+            ss->styleNew |= t_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
             break;
         }
         }
