@@ -10,13 +10,16 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *pp)
 {
-    D3DPRESENT_PARAMETERS rp = *pp;
+    pp->Windowed = TRUE;
+    pp->FullScreen_RefreshRateInHz = 0;
 
-    rp.Windowed = TRUE, rp.FullScreen_RefreshRateInHz = 0;
-    rp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-    rp.BackBufferCount = 0, rp.SwapEffect = D3DSWAPEFFECT_COPY;
+    pp->BackBufferCount = 0;
+    pp->SwapEffect = D3DSWAPEFFECT_COPY;
 
-    return g_Reset(this, &rp);
+    pp->hDeviceWindow = g_Window;
+    pp->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+
+    return g_Reset(this, pp);
 }
 
 HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
@@ -36,19 +39,12 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     this->lpVtbl->GetViewport(this, &vp);
 
     RECT rc = {vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height};
-    return g_Present(this, &rc, NULL, g_Window, NULL);
+    return g_Present(this, &rc, NULL, NULL, NULL);
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags, D3DPRESENT_PARAMETERS *pp,
                             LPDIRECT3DDEVICE9 *device)
 {
-    flags |= D3DCREATE_NOWINDOWCHANGES;
-
-    D3DPRESENT_PARAMETERS cp = *pp;
-    cp.Windowed = TRUE, cp.FullScreen_RefreshRateInHz = 0;
-    cp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-    cp.BackBufferCount = 0, cp.SwapEffect = D3DSWAPEFFECT_COPY;
-
     if (!IsWindow(g_Window))
     {
         g_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG)WndProc);
@@ -64,7 +60,17 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         RedrawWindow(wnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
     }
 
-    HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &cp, device);
+    pp->Windowed = TRUE;
+    pp->FullScreen_RefreshRateInHz = 0;
+
+    pp->BackBufferCount = 0;
+    pp->SwapEffect = D3DSWAPEFFECT_COPY;
+
+    pp->hDeviceWindow = g_Window;
+    pp->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+
+    flags |= D3DCREATE_NOWINDOWCHANGES;
+    HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, pp, device);
 
     if (SUCCEEDED(hr) && !g_Present && !g_Reset)
     {

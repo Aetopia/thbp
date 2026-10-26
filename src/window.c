@@ -61,7 +61,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_WINDOWPOSCHANGING: {
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        if ((wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE))
+        if (wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE)
             return 0;
 
         MONITORINFO mi = {sizeof(MONITORINFO)};
