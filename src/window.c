@@ -11,14 +11,13 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_SIZE:
     case WM_PAINT:
-    case WM_SETCURSOR:
     case WM_ERASEBKGND: {
-        if (uMsg == WM_SETCURSOR && hWnd == GetForegroundWindow())
-        {
-            SetCursor(NULL);
-            return TRUE;
-        }
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+    }
+    case WM_SETCURSOR: {
+        BOOL _ = hWnd == GetForegroundWindow();
+        SetCursor(_ ? NULL : LoadCursorW(NULL, IDC_ARROW));
+        return TRUE;
     }
     case WM_SYSCOMMAND: {
         if (GET_SC_WPARAM(wParam) != SC_CLOSE)
@@ -34,7 +33,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
         }
         case GWL_STYLE: {
-            ss->styleNew = WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN;
+            ss->styleNew = WS_POPUP;
+            ss->styleNew |= WS_VISIBLE;
+            ss->styleNew |= WS_CLIPCHILDREN;
             break;
         }
         }
