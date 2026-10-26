@@ -30,7 +30,6 @@ https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
 ### Tweaks
 - The presentation rate is constrained to 60 FPS on purpose.
 - [High DPI Awareness is enabled](https://learn.microsoft.com/windows/win32/hidpi/high-dpi-desktop-application-development-on-windows) to avoid bitmap stretching.
-- Desktop Window Manager opts in for [MMCSS scheduling](https://github.com/djdallmann/GamingPCSetup/blob/master/CONTENT/RESEARCH/WINSERVICES/README.md#q-can-you-take-advantage-of-the-mmcss-boosted-csrss-and-dwm-thread-priorities-dwmenablemmcss-while-using-a-fullscreen-exclusive-application).
 - DirectInput no longer [blocks the Windows key](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee417921(v=vs.85)) when in use.
 
 ## Usage
