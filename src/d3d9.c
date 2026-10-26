@@ -10,9 +10,8 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 
 HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *pp)
 {
-    g_Windowed = pp->Windowed;
-
     D3DPRESENT_PARAMETERS rp = *pp;
+
     rp.Windowed = TRUE, rp.FullScreen_RefreshRateInHz = 0;
     rp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
     rp.BackBufferCount = 0, rp.SwapEffect = D3DSWAPEFFECT_COPY;
@@ -30,11 +29,8 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     s_last = (s_last ?: now) + 1E7 / 60;
     s_last = s_last < now ? now : s_last;
 
-    do
-    {
-        _mm_pause();
+    while (now < s_last)
         QueryInterruptTimePrecise(&now);
-    } while (now < s_last);
 
     D3DVIEWPORT9 vp = {};
     this->lpVtbl->GetViewport(this, &vp);
@@ -46,7 +42,6 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags, D3DPRESENT_PARAMETERS *pp,
                             LPDIRECT3DDEVICE9 *device)
 {
-    g_Windowed = pp->Windowed;
     flags |= D3DCREATE_NOWINDOWCHANGES;
 
     D3DPRESENT_PARAMETERS cp = *pp;
@@ -59,11 +54,14 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
         g_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG)WndProc);
         g_Window = CreateWindowExW(0, L" ", NULL, WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
-        SetWindowLongW(wnd, GWL_STYLE, 0), SetWindowLongW(wnd, GWL_EXSTYLE, 0);
-        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
+        SetWindowLongW(wnd, GWL_STYLE, 0);
+        SetWindowLongW(wnd, GWL_EXSTYLE, 0);
 
+        HBRUSH hbr = GetStockObject(BLACK_BRUSH);
+        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)hbr);
+
+        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED);
         RedrawWindow(wnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
-        SetWindowPos(wnd, NULL, 0, 0, 0, 0, g_Windowed * (SWP_NOMOVE | SWP_NOSIZE));
     }
 
     HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, &cp, device);

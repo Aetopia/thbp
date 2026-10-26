@@ -3,7 +3,6 @@
 #include <winbase.h>
 
 HWND g_Window = {};
-BOOL g_Windowed = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -12,21 +11,18 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_SIZE:
     case WM_PAINT:
+    case WM_SETCURSOR:
     case WM_ERASEBKGND: {
+        if (uMsg == WM_SETCURSOR && hWnd == GetForegroundWindow())
+        {
+            SetCursor(NULL);
+            return TRUE;
+        }
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
-    case WM_SETCURSOR: {
-        if (g_Windowed || hWnd != GetForegroundWindow())
-            return DefWindowProcW(hWnd, uMsg, wParam, lParam);
-        return SetCursor(NULL), TRUE;
-    }
     case WM_SYSCOMMAND: {
-        switch (GET_SC_WPARAM(wParam))
-        {
-        case SC_KEYMENU:
-        case SC_MOUSEMENU:
+        if (GET_SC_WPARAM(wParam) != SC_CLOSE)
             return 0;
-        }
         break;
     }
     case WM_STYLECHANGING: {
@@ -38,8 +34,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
         }
         case GWL_STYLE: {
-            ss->styleNew = WS_VISIBLE | WS_CLIPCHILDREN;
-            ss->styleNew |= g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
+            ss->styleNew = WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN;
             break;
         }
         }
@@ -66,9 +61,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_WINDOWPOSCHANGING: {
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        wp->flags |= SWP_FRAMECHANGED;
-
-        if (g_Windowed || (wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE))
+        if ((wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE))
             return 0;
 
         MONITORINFO mi = {sizeof(MONITORINFO)};
