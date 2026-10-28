@@ -9,20 +9,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-    case WM_SYSCOMMAND: {
-        if (GET_SC_WPARAM(wParam) != SC_CLOSE)
-            return 0;
-        break;
+    case WM_PAINT:
+    case WM_ERASEBKGND: {
+        return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_SETCURSOR: {
         BOOL _ = hWnd == GetForegroundWindow();
         SetCursor(_ ? NULL : LoadCursorW(NULL, IDC_ARROW));
         return TRUE;
-    }
-    case WM_SIZE:
-    case WM_PAINT:
-    case WM_ERASEBKGND: {
-        return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_STYLECHANGING: {
         LPSTYLESTRUCT ws = (LPSTYLESTRUCT)lParam;
