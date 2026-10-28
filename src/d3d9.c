@@ -16,7 +16,6 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *pp)
     pp->BackBufferCount = 0;
     pp->SwapEffect = D3DSWAPEFFECT_COPY;
 
-    pp->hDeviceWindow = g_Window;
     pp->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
     return g_Reset(this, pp);
@@ -39,16 +38,16 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     this->lpVtbl->GetViewport(this, &vp);
 
     RECT rc = {vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height};
-    return g_Present(this, &rc, NULL, NULL, NULL);
+    return g_Present(this, &rc, NULL, g_Child, NULL);
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags, D3DPRESENT_PARAMETERS *pp,
                             LPDIRECT3DDEVICE9 *device)
 {
-    if (!IsWindow(g_Window))
+    if (!IsWindow(g_Child))
     {
         g_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG)WndProc);
-        g_Window = CreateWindowExW(0, L" ", NULL, WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
+        g_Child = CreateWindowExW(0, L" ", NULL, WS_CHILD, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
 
         SetWindowLongW(wnd, GWL_STYLE, 0);
         SetWindowLongW(wnd, GWL_EXSTYLE, 0);
@@ -66,7 +65,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
     pp->BackBufferCount = 0;
     pp->SwapEffect = D3DSWAPEFFECT_COPY;
 
-    pp->hDeviceWindow = g_Window;
     pp->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
     flags |= D3DCREATE_NOWINDOWCHANGES;
