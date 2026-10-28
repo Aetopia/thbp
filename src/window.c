@@ -9,33 +9,32 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-    case WM_SIZE:
-    case WM_PAINT:
-    case WM_ERASEBKGND: {
-        return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+    case WM_SYSCOMMAND: {
+        if (GET_SC_WPARAM(wParam) != SC_CLOSE)
+            return 0;
+        break;
     }
     case WM_SETCURSOR: {
         BOOL _ = hWnd == GetForegroundWindow();
         SetCursor(_ ? NULL : LoadCursorW(NULL, IDC_ARROW));
         return TRUE;
     }
-    case WM_SYSCOMMAND: {
-        if (GET_SC_WPARAM(wParam) != SC_CLOSE)
-            return 0;
-        break;
+    case WM_SIZE:
+    case WM_PAINT:
+    case WM_ERASEBKGND: {
+        return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_STYLECHANGING: {
-        LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
+        LPSTYLESTRUCT ws = (LPSTYLESTRUCT)lParam;
         switch (wParam)
         {
         case GWL_EXSTYLE: {
-            ss->styleNew = 0;
+            ws->styleNew = WS_EX_APPWINDOW;
             break;
         }
         case GWL_STYLE: {
-            ss->styleNew = WS_POPUP;
-            ss->styleNew |= WS_VISIBLE;
-            ss->styleNew |= WS_CLIPCHILDREN;
+            ws->styleNew = WS_VISIBLE & ws->styleNew;
+            ws->styleNew |= WS_POPUP | WS_CLIPCHILDREN;
             break;
         }
         }
@@ -57,7 +56,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         INT x = (rc.right - cx) / 2;
         INT y = (rc.bottom - cy) / 2;
 
-        SetWindowPos(g_Child, NULL, x, y, cx, cy, SWP_SHOWWINDOW);
+        SetWindowPos(g_Child, NULL, x, y, cx, cy, 0);
         return 0;
     }
     case WM_WINDOWPOSCHANGING: {
