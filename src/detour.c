@@ -1,6 +1,5 @@
 #include <windef.h>
 #include <wingdi.h>
-#include <winuser.h>
 #include <synchapi.h>
 #include <memoryapi.h>
 #include <processthreadsapi.h>
@@ -17,12 +16,8 @@ INT WINAPI $ShowCursor(BOOL _)
 
 BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
 {
-    if (!EnumDisplaySettingsExW(name, idx, dm, 0))
-        return FALSE;
-
     dm->dmPelsWidth = 1280;
     dm->dmPelsHeight = 960;
-
     return TRUE;
 }
 
