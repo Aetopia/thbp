@@ -19,7 +19,7 @@ HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *pp)
     return g_Reset(this, pp);
 }
 
-HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, PVOID rgn)
+HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND hwnd, PVOID rgn)
 {
     static ULONG64 s_last = {};
 
@@ -39,22 +39,22 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND wnd, P
     return g_Present(this, &rc, NULL, g_Child, NULL);
 }
 
-HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd, DWORD flags, D3DPRESENT_PARAMETERS *pp,
-                            LPDIRECT3DDEVICE9 *device)
+HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd, DWORD flags,
+                            D3DPRESENT_PARAMETERS *pp, LPDIRECT3DDEVICE9 *device)
 {
     if (!IsWindow(g_Child))
     {
-        g_WndProc = (PVOID)SetWindowLongW(wnd, GWL_WNDPROC, (LONG)WndProc);
-        g_Child = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, wnd, NULL, NULL, NULL);
+        g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
+        g_Child = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
 
-        SetWindowLongW(wnd, GWL_STYLE, 0);
-        SetWindowLongW(wnd, GWL_EXSTYLE, 0);
+        SetWindowLongW(hwnd, GWL_STYLE, 0);
+        SetWindowLongW(hwnd, GWL_EXSTYLE, 0);
 
         HBRUSH hbr = GetStockObject(BLACK_BRUSH);
-        SetClassLongW(wnd, GCL_HBRBACKGROUND, (LONG)hbr);
+        SetClassLongW(hwnd, GCL_HBRBACKGROUND, (LONG)hbr);
 
-        SetWindowPos(wnd, NULL, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_FRAMECHANGED);
-        RedrawWindow(wnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
+        SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+        RedrawWindow(hwnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
     }
 
     pp->Windowed = TRUE;
@@ -63,8 +63,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND wnd,
     pp->BackBufferCount = pp->FullScreen_RefreshRateInHz = 0;
     pp->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    flags |= D3DCREATE_NOWINDOWCHANGES;
-    HRESULT hr = g_CreateDevice(this, adapter, type, wnd, flags, pp, device);
+    HRESULT hr = g_CreateDevice(this, adapter, type, hwnd, flags, pp, device);
 
     if (SUCCEEDED(hr) && !g_Present && !g_Reset)
     {
