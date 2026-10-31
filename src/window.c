@@ -2,7 +2,7 @@
 #include <winuser.h>
 #include <winbase.h>
 
-HWND g_Child = {};
+HWND g_Window = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -50,7 +50,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         INT x = (rc.right - cx) / 2;
         INT y = (rc.bottom - cy) / 2;
 
-        SetWindowPos(g_Child, NULL, x, y, cx, cy, 0);
+        SetWindowPos(g_Window, NULL, x, y, cx, cy, 0);
         return 0;
     }
     case WM_WINDOWPOSCHANGING: {

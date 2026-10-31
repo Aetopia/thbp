@@ -39,7 +39,7 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND hwnd, 
     this->lpVtbl->GetViewport(this, &vp);
 
     RECT rc = {vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height};
-    return g_Present(this, &rc, NULL, g_Child, NULL);
+    return g_Present(this, &rc, NULL, g_Window, NULL);
 }
 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd, DWORD flags,
@@ -47,10 +47,10 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
 {
     SetWindowLongW(hwnd, GWL_USERDATA, pp->Windowed);
 
-    if (!IsWindow(g_Child))
+    if (IsWindow(hwnd) && !IsWindow(g_Window))
     {
         g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
-        g_Child = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
+        g_Window = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
 
         LONG ws = WS_VISIBLE & GetWindowLongW(hwnd, GWL_STYLE);
         SetWindowLongW(hwnd, GWL_STYLE, ws), SetWindowLongW(hwnd, GWL_EXSTYLE, 0);
