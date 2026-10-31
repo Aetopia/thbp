@@ -8,8 +8,12 @@ HRESULT WINAPI (*g_Reset)(PVOID, PVOID) = {};
 HRESULT WINAPI (*g_Present)(PVOID, PVOID, PVOID, HWND, PVOID) = {};
 HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PVOID) = {};
 
-HRESULT WINAPI Reset(PVOID this, D3DPRESENT_PARAMETERS *pp)
+HRESULT WINAPI Reset(LPDIRECT3DDEVICE9 this, D3DPRESENT_PARAMETERS *pp)
 {
+    D3DDEVICE_CREATION_PARAMETERS cp = {};
+    this->lpVtbl->GetCreationParameters(this, &cp);
+    SetWindowLongW(cp.hFocusWindow, GWL_USERDATA, pp->Windowed);
+
     D3DPRESENT_PARAMETERS rp = *pp;
     rp.Windowed = TRUE, rp.SwapEffect = D3DSWAPEFFECT_COPY;
     rp.BackBufferCount = rp.FullScreen_RefreshRateInHz = 0;
@@ -41,6 +45,8 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND hwnd, 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *pp, LPDIRECT3DDEVICE9 *device)
 {
+    SetWindowLongW(hwnd, GWL_USERDATA, pp->Windowed);
+
     if (!IsWindow(g_Child))
     {
         g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
