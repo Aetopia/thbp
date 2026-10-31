@@ -9,6 +9,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
+    case WM_SIZE:
     case WM_PAINT:
     case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
@@ -31,8 +32,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
         }
         case GWL_STYLE: {
-            ws->styleNew = WS_VISIBLE & ws->styleNew;
-            ws->styleNew |= WS_POPUP | WS_CLIPCHILDREN;
+            ws->styleNew = (ws->styleNew & WS_VISIBLE) | WS_CLIPCHILDREN;
+            ws->styleNew |= GetWindowLongW(hWnd, GWL_USERDATA) ? WS_TILEDWINDOW : WS_POPUP;
             break;
         }
         }
@@ -58,6 +59,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_WINDOWPOSCHANGING: {
+        if (GetWindowLongW(hWnd, GWL_USERDATA))
+            return 0;
+
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
         if (wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE)
             return 0;
