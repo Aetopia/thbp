@@ -14,9 +14,13 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_SETCURSOR: {
-        BOOL _ = hWnd == GetForegroundWindow();
-        SetCursor(_ ? NULL : LoadCursorW(NULL, IDC_ARROW));
-        return TRUE;
+        if (GetWindowLongW(hWnd, GWL_USERDATA))
+            return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+
+        if (hWnd != GetForegroundWindow())
+            return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+
+        return SetCursor(NULL), TRUE;
     }
     case WM_STYLECHANGING: {
         LPSTYLESTRUCT ws = (LPSTYLESTRUCT)lParam;
