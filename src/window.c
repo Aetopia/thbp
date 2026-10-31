@@ -14,6 +14,16 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
+    case WM_SYSCOMMAND: {
+        switch (GET_SC_WPARAM(wParam))
+        {
+        case SC_KEYMENU:
+        case SC_MOUSEMENU: {
+            return 0;
+        }
+        }
+        break;
+    }
     case WM_SETCURSOR: {
         if (GetWindowLongW(hWnd, GWL_USERDATA))
             return DefWindowProcW(hWnd, uMsg, wParam, lParam);
