@@ -47,7 +47,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
 {
     SetWindowLongW(hwnd, GWL_USERDATA, pp->Windowed);
 
-    if (IsWindow(hwnd) && !IsWindow(g_Window))
+    if (!IsWindow(g_Window))
     {
         g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
         g_Window = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
