@@ -9,18 +9,22 @@ Adds resizable window & borderless fullscreen support to Touhou games.
 > - This list shows games that are confirmed to work.
 > - Feel free to test it with other games & report back!
 
-> [!CAUTION]
-> All games prior to Touhou 10 aren't supported due to D3D8.
-> - To fix this, install [`d3d8to9`](https://github.com/crosire/d3d8to9/releases/latest) to promote D3D9.
-> - Any games that use D3D8 will now be compatible. 
+|Entry|Name|API|
+|:-|:-|:-|
+|9|Phantasmagoria of Flower View|D3D8|
+|9.5|Shoot the Bullet|D3D8|
+|10|Mountain of Faith|D3D9|
+|12|Undefined Fantastic Object|D3D9|
+|15|Legacy of Lunatic Kingdom|D3D9|
+|18|Unconnected Marketeers|D3D9|
+|20|Fossilized Wonders|D3D9|
 
-- Touhou 9
-- Touhou 9.5
-- Touhou 10
-- Touhou 12
-- Touhou 15
-- Touhou 18
-- Touhou 20
+> [!CAUTION]
+> For games that use D3D8, please install [d3d8to9](https://github.com/crosire/d3d8to9/releases/latest).
+> - This will improve compatibility on modern systems.
+> - This will allow the patch to function with these games.
+
+### Showcase
 
 <div align="center">
 
