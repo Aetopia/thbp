@@ -25,12 +25,7 @@ Adds resizable window & borderless fullscreen support to Touhou games.
 > - This will allow the patch to function with these games.
 
 ### Showcase
-
-<div align="center">
-
 https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
-
-</div>
 
 ### Tweaks
 - The presentation rate is constrained to 60 FPS on purpose.
