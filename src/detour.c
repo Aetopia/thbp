@@ -24,7 +24,8 @@ BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
 
     dm->dmPelsWidth = 1280;
     dm->dmPelsHeight = 960;
-    
+    dm->dmDisplayFrequency = 0;
+
     return TRUE;
 }
 
