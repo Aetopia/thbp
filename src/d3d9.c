@@ -45,21 +45,25 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND hwnd, 
 HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd, DWORD flags,
                             D3DPRESENT_PARAMETERS *pp, LPDIRECT3DDEVICE9 *device)
 {
-    SetWindowLongW(hwnd, GWL_USERDATA, pp->Windowed);
-
     if (!IsWindow(g_Window))
     {
+        SetWindowLongW(hwnd, GWL_USERDATA, pp->Windowed);
+
         g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
         g_Window = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
 
+        LONG hbr = (LONG)GetStockObject(BLACK_BRUSH);
         LONG ws = WS_VISIBLE & GetWindowLongW(hwnd, GWL_STYLE);
-        SetWindowLongW(hwnd, GWL_STYLE, ws), SetWindowLongW(hwnd, GWL_EXSTYLE, 0);
-        SetClassLongW(hwnd, GCL_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
 
-        UINT flags = SWP_SHOWWINDOW | SWP_FRAMECHANGED;
-        flags |= GetWindowLongW(hwnd, GWL_USERDATA) * (SWP_NOMOVE | SWP_NOSIZE);
+        UINT flags = SWP_DRAWFRAME | SWP_SHOWWINDOW;
+        flags |= pp->Windowed * (SWP_NOMOVE | SWP_NOSIZE);
 
+        SetWindowLongW(hwnd, GWL_STYLE, ws);
+        SetWindowLongW(hwnd, GWL_EXSTYLE, 0);
+
+        SetClassLongW(hwnd, GCL_HBRBACKGROUND, hbr);
         SetWindowPos(hwnd, NULL, 0, 0, 0, 0, flags);
+
         RedrawWindow(hwnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
     }
 
