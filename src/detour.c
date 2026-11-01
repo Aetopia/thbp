@@ -42,7 +42,7 @@ PVOID CreateDetour(PVOID src, PVOID dst)
     __movsb(src, (PVOID)&jmp, sizeof jmp);
 
     VirtualProtect(src, sizeof jmp, flags, &(DWORD){});
-    FlushInstructionCache(GetCurrentProcess(), src, sizeof jmp);
+    FlushInstructionCache(GetCurrentProcess(), NULL, 0);
 
     return ptr;
 }
