@@ -4,9 +4,12 @@
 #include <memoryapi.h>
 #include <processthreadsapi.h>
 
+VOID WINAPI (*g_Sleep)(DWORD) = {};
+BOOL WINAPI (*g_EnumDisplaySettingsW)(PVOID, DWORD, PVOID) = {};
+
 VOID WINAPI $Sleep(DWORD _)
 {
-    SleepEx(_ ? 1 : 0, FALSE);
+    g_Sleep(_ ? 1 : 0);
 }
 
 INT WINAPI $ShowCursor(BOOL _)
@@ -16,8 +19,12 @@ INT WINAPI $ShowCursor(BOOL _)
 
 BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
 {
+    if (!g_EnumDisplaySettingsW(name, idx, dm))
+        return FALSE;
+
     dm->dmPelsWidth = 1280;
     dm->dmPelsHeight = 960;
+    
     return TRUE;
 }
 
