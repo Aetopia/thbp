@@ -6,15 +6,28 @@
 
 VOID WINAPI (*g_Sleep)(DWORD) = {};
 BOOL WINAPI (*g_EnumDisplaySettingsW)(PVOID, DWORD, PVOID) = {};
+BOOL WINAPI (*g_EnumDisplaySettingsA)(PVOID, DWORD, PVOID) = {};
+
+INT WINAPI $ShowCursor(BOOL _)
+{
+    return _ ? 0 : -1;
+}
 
 VOID WINAPI $Sleep(DWORD _)
 {
     g_Sleep(_ ? 1 : 0);
 }
 
-INT WINAPI $ShowCursor(BOOL _)
+BOOL WINAPI $EnumDisplaySettingsA(PVOID name, DWORD idx, PDEVMODEA dm)
 {
-    return _ ? 0 : -1;
+    if (!g_EnumDisplaySettingsA(name, idx, dm))
+        return FALSE;
+
+    dm->dmPelsWidth = 1280;
+    dm->dmPelsHeight = 960;
+    dm->dmDisplayFrequency = 0;
+
+    return TRUE;
 }
 
 BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)

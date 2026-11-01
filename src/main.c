@@ -49,6 +49,8 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
 
         CreateDetour(ShowCursor, $ShowCursor);
         g_Sleep = CreateDetour(Sleep, $Sleep);
+
+        g_EnumDisplaySettingsA = CreateDetour(EnumDisplaySettingsA, $EnumDisplaySettingsA);
         g_EnumDisplaySettingsW = CreateDetour(EnumDisplaySettingsW, $EnumDisplaySettingsW);
 
         g_CreateDevice = CreateDetour(d3d9->lpVtbl->CreateDevice, CreateDevice);
