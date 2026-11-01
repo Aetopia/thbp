@@ -23,8 +23,8 @@ BOOL WINAPI $EnumDisplaySettingsA(PVOID name, DWORD idx, PDEVMODEA dm)
     if (!g_EnumDisplaySettingsA(name, idx, dm))
         return FALSE;
 
-    dm->dmPelsWidth = 1280;
-    dm->dmPelsHeight = 960;
+    dm->dmPelsWidth = 1280 + 4;
+    dm->dmPelsHeight = 960 + 3;
     dm->dmDisplayFrequency = 0;
 
     return TRUE;
@@ -35,8 +35,8 @@ BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
     if (!g_EnumDisplaySettingsW(name, idx, dm))
         return FALSE;
 
-    dm->dmPelsWidth = 1280;
-    dm->dmPelsHeight = 960;
+    dm->dmPelsWidth = 1280 + 4;
+    dm->dmPelsHeight = 960 + 3;
     dm->dmDisplayFrequency = 0;
 
     return TRUE;
