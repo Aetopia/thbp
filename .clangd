@@ -2,14 +2,9 @@ CompileFlags:
   Add: 
     - '-Wall'
     - '-Werror'
-
     - '-municode'
-    - '-std=gnu99'
-    - '--target=i686-w64-windows-gnu'
-  
     - '-DINITGUID'
     - '-DWINVER=NTDDI_WIN10'
-    - '-DWIN32_LEAN_AND_MEAN'
-
+    - '--target=i686-w64-windows-gnu'
 Diagnostics:
   Suppress: ['dll-attribute-on-redeclaration']
