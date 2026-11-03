@@ -11,7 +11,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_SIZE:
     case WM_PAINT:
-    case WM_ERASEBKGND: {
+    case WM_ERASEBKGND:
+    case WM_ACTIVATEAPP: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_SYSCOMMAND: {
@@ -34,16 +35,16 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return SetCursor(NULL), TRUE;
     }
     case WM_STYLECHANGING: {
-        LPSTYLESTRUCT ws = (LPSTYLESTRUCT)lParam;
+        LPSTYLESTRUCT ss = (LPSTYLESTRUCT)lParam;
         switch (wParam)
         {
         case GWL_EXSTYLE: {
-            ws->styleNew = WS_EX_APPWINDOW;
+            ss->styleNew = WS_EX_APPWINDOW;
             break;
         }
         case GWL_STYLE: {
-            ws->styleNew = (ws->styleNew & WS_VISIBLE) | WS_CLIPCHILDREN;
-            ws->styleNew |= GetWindowLongW(hWnd, GWL_USERDATA) ? WS_TILEDWINDOW : WS_POPUP;
+            ss->styleNew = (WS_VISIBLE & ss->styleNew) | WS_CLIPCHILDREN;
+            ss->styleNew |= GetWindowLongW(hWnd, GWL_USERDATA) ? WS_OVERLAPPEDWINDOW : WS_POPUP;
             break;
         }
         }

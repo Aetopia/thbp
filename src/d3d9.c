@@ -52,17 +52,17 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
         g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
         g_Window = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
 
-        LONG hbr = (LONG)GetStockObject(BLACK_BRUSH);
-        LONG ws = WS_VISIBLE & GetWindowLongW(hwnd, GWL_STYLE);
+        LONG brush = (LONG)GetStockObject(BLACK_BRUSH);
+        LONG style = WS_VISIBLE & GetWindowLongW(hwnd, GWL_STYLE);
 
-        UINT flags = SWP_DRAWFRAME | SWP_SHOWWINDOW;
+        UINT flags = SWP_SHOWWINDOW | SWP_FRAMECHANGED;
         flags |= pp->Windowed * (SWP_NOMOVE | SWP_NOSIZE);
 
-        SetWindowLongW(hwnd, GWL_STYLE, ws);
         SetWindowLongW(hwnd, GWL_EXSTYLE, 0);
+        SetWindowLongW(hwnd, GWL_STYLE, style);
 
-        SetClassLongW(hwnd, GCL_HBRBACKGROUND, hbr);
-        SetWindowPos(hwnd, NULL, 0, 0, 0, 0, flags);
+        SetClassLongW(hwnd, GCL_HBRBACKGROUND, brush);
+        SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, flags);
 
         RedrawWindow(hwnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
     }
