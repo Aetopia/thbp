@@ -1,4 +1,3 @@
-#include <dwmapi.h>
 #include <dinput.h>
 #include <dinputd.h>
 
@@ -32,7 +31,6 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
             .hCursor = LoadCursorW(NULL, IDC_ARROW),
             .hbrBackground = GetStockObject(BLACK_BRUSH),
         });
-        DwmEnableMMCSS(TRUE);
 
         WCHAR path[MAX_PATH] = {};
         GetSystemDirectoryW(path, MAX_PATH);

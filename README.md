@@ -29,7 +29,6 @@ https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
 
 ### Tweaks
 - The presentation rate is constrained to 60 FPS on purpose.
-- Desktop Window Manager opts in for [MMCSS scheduling](https://learn.microsoft.com/windows/win32/direct3darticles/direct3d-9ex-improvements#summary-of-programming-recommendations-for-frame-synchronization).
 - DPI awareness is now enabled to avoid [bitmap stretching](https://learn.microsoft.com/windows/win32/hidpi/high-dpi-desktop-application-development-on-windows#dpi-unaware).
 - DirectInput no longer [blocks the Windows key](https://learn.microsoft.com/previous-versions/windows/desktop/ee417921(v=vs.85)) when in use.
 
