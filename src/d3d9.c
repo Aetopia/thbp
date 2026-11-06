@@ -72,7 +72,6 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
     cp.BackBufferCount = cp.FullScreen_RefreshRateInHz = 0;
     cp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    flags |= D3DCREATE_NOWINDOWCHANGES;
     HRESULT hr = g_CreateDevice(this, adapter, type, hwnd, flags, &cp, device);
 
     if (SUCCEEDED(hr) && !g_Present && !g_Reset)
