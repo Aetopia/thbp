@@ -11,8 +11,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_SIZE:
     case WM_PAINT:
-    case WM_ERASEBKGND:
-    case WM_ACTIVATEAPP: {
+    case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_SYSCOMMAND: {
