@@ -70,14 +70,18 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_WINDOWPOSCHANGING: {
+        PWINDOWPOS wp = (PWINDOWPOS)lParam;
+        MONITORINFO mi = {sizeof(MONITORINFO)};
+
+        if (~wp->flags & (SWP_NOMOVE | SWP_NOSIZE))
+            wp->flags |= SWP_NOCOPYBITS;
+
         if (GetWindowLongW(hWnd, GWL_USERDATA))
             return 0;
 
-        PWINDOWPOS wp = (PWINDOWPOS)lParam;
-        if (wp->flags & SWP_NOMOVE && wp->flags & SWP_NOSIZE)
+        if (!(~wp->flags & (SWP_NOMOVE | SWP_NOSIZE)))
             return 0;
 
-        MONITORINFO mi = {sizeof(MONITORINFO)};
         RECT rc = {wp->x, wp->y, wp->x + wp->cx, wp->y + wp->cy};
         GetMonitorInfoW(MonitorFromRect(&rc, MONITOR_DEFAULTTONEAREST), &mi);
 
