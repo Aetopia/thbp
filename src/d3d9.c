@@ -62,7 +62,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
         SetWindowLongW(hwnd, GWL_EXSTYLE, 0);
 
         SetClassLongW(hwnd, GCL_HBRBACKGROUND, hbr);
-        SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, swp);
+        SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, swp);
 
         RedrawWindow(hwnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
     }

@@ -50,6 +50,12 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_WINDOWPOSCHANGED: {
+        if (WS_EX_TOPMOST & GetWindowLongW(hWnd, GWL_EXSTYLE))
+        {
+            SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+            return 0;
+        }
+
         RECT rc = {};
         GetClientRect(hWnd, &rc);
 
@@ -65,7 +71,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         INT x = (rc.right - cx) / 2;
         INT y = (rc.bottom - cy) / 2;
 
-        SetWindowPos(g_Child, NULL, x, y, cx, cy, 0);
+        SetWindowPos(g_Child, HWND_TOP, x, y, cx, cy, 0);
         return 0;
     }
     case WM_WINDOWPOSCHANGING: {
