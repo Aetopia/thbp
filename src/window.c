@@ -11,7 +11,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_SIZE:
     case WM_PAINT:
-    case WM_ERASEBKGND: {
+    case WM_ERASEBKGND:
+    case WM_ACTIVATEAPP: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
     case WM_SYSCOMMAND: {
@@ -21,6 +22,11 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case SC_MOUSEMENU:
             return 0;
         }
+        break;
+    }
+    case WM_NCACTIVATE: {
+        wParam = hWnd == GetForegroundWindow(), lParam = 0;
+        CallWindowProcW(g_WndProc, hWnd, WM_ACTIVATEAPP, wParam, lParam);
         break;
     }
     case WM_SETCURSOR: {
