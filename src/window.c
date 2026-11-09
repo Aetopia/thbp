@@ -9,6 +9,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
+    case WM_SIZE:
+    case WM_PAINT:
     case WM_ERASEBKGND: {
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
@@ -16,9 +18,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         switch (GET_SC_WPARAM(wParam))
         {
         case SC_KEYMENU:
-        case SC_MOUSEMENU: {
+        case SC_MOUSEMENU:
             return 0;
-        }
         }
         break;
     }
