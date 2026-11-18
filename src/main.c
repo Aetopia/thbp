@@ -7,10 +7,10 @@
 HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
 HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, LPCVOID, PVOID, PVOID) = {};
 
-HRESULT WINAPI SetCooperativeLevel(PVOID this, HWND wnd, DWORD flags)
+HRESULT WINAPI SetCooperativeLevel(PVOID this, HWND hwnd, DWORD flags)
 {
     flags &= ~DISCL_NOWINKEY;
-    return g_SetCooperativeLevel(this, wnd, flags);
+    return g_SetCooperativeLevel(this, hwnd, flags);
 }
 
 __declspec(dllexport) HRESULT WINAPI DirectInput8Create(HINSTANCE instance, DWORD version, REFIID iid, LPVOID *object,
