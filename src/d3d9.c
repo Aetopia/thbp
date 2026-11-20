@@ -53,20 +53,21 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
         g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
         g_Child = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
 
-        LONG ws = WS_VISIBLE & GetWindowLongW(hwnd, GWL_STYLE);
-        SetWindowLongW(hwnd, GWL_STYLE, ws), SetWindowLongW(hwnd, GWL_EXSTYLE, 0);
+        SetWindowLongW(hwnd, GWL_EXSTYLE, WS_EX_APPWINDOW);
+        SetWindowLongW(hwnd, GWL_STYLE, GetWindowLongW(hwnd, GWL_STYLE));
         SetClassLongW(hwnd, GCL_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
 
         UINT swp = SWP_SHOWWINDOW | SWP_FRAMECHANGED;
         swp |= pp->Windowed * (SWP_NOMOVE | SWP_NOSIZE);
 
-        SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, swp);
         SendMessageW(hwnd, WM_NCACTIVATE, FALSE, -1);
+        SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, swp);
 
         RedrawWindow(hwnd, NULL, NULL, RDW_ERASE | RDW_ERASENOW | RDW_INVALIDATE);
     }
 
     D3DPRESENT_PARAMETERS cp = *pp;
+    
     cp.Windowed = TRUE, cp.SwapEffect = D3DSWAPEFFECT_COPY;
     cp.BackBufferCount = cp.FullScreen_RefreshRateInHz = 0;
     cp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
