@@ -5,7 +5,7 @@
 #include "d3d9.c"
 
 HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
-HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, LPCVOID, PVOID, PVOID) = {};
+HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, REFIID, PVOID, PVOID) = {};
 
 HRESULT WINAPI SetCooperativeLevel(PVOID this, HWND hwnd, DWORD flags)
 {
@@ -13,7 +13,7 @@ HRESULT WINAPI SetCooperativeLevel(PVOID this, HWND hwnd, DWORD flags)
     return g_SetCooperativeLevel(this, hwnd, flags);
 }
 
-__declspec(dllexport) HRESULT WINAPI DirectInput8Create(HINSTANCE instance, DWORD version, REFIID iid, LPVOID *object,
+__declspec(dllexport) HRESULT WINAPI DirectInput8Create(HINSTANCE instance, DWORD version, REFIID iid, PVOID *object,
                                                         LPUNKNOWN unknown)
 {
     return g_DirectInput8Create(instance, version, iid, object, unknown);
@@ -48,8 +48,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
         dinput8->lpVtbl->CreateDevice(dinput8, &GUID_SysMouseEm, &device, NULL);
 
         CreateDetour(ShowCursor, $ShowCursor);
-        g_Sleep = CreateDetour(Sleep, $Sleep);
+        CreateDetour(EnableWindow, $EnableWindow);
 
+        g_Sleep = CreateDetour(Sleep, $Sleep);
         g_EnumDisplaySettingsA = CreateDetour(EnumDisplaySettingsA, $EnumDisplaySettingsA);
         g_EnumDisplaySettingsW = CreateDetour(EnumDisplaySettingsW, $EnumDisplaySettingsW);
 

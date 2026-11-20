@@ -15,6 +15,11 @@ INT WINAPI $ShowCursor(BOOL show)
     return show ? 0 : -1;
 }
 
+BOOL WINAPI $EnableWindow(HWND hwnd, BOOL enable)
+{
+    return TRUE;
+}
+
 VOID WINAPI $Sleep(DWORD interval)
 {
     g_Sleep(interval ? 1 : 0);
