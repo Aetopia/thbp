@@ -1,3 +1,5 @@
+#pragma once
+
 #include <d3d9.h>
 #include <realtimeapiset.h>
 
@@ -67,7 +69,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
     }
 
     D3DPRESENT_PARAMETERS cp = *pp;
-    
+
     cp.Windowed = TRUE, cp.SwapEffect = D3DSWAPEFFECT_COPY;
     cp.BackBufferCount = cp.FullScreen_RefreshRateInHz = 0;
     cp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;

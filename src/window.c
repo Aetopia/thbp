@@ -1,3 +1,5 @@
+#pragma once
+
 #include <windef.h>
 #include <winuser.h>
 #include <winbase.h>

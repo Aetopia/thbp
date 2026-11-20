@@ -1,3 +1,5 @@
+#pragma once
+
 #include <windef.h>
 #include <wingdi.h>
 #include <synchapi.h>
