@@ -12,6 +12,8 @@ HRESULT WINAPI (*g_CreateDevice)(PVOID, UINT, D3DDEVTYPE, HWND, DWORD, PVOID, PV
 
 HRESULT WINAPI Reset(LPDIRECT3DDEVICE9 this, D3DPRESENT_PARAMETERS *pp)
 {
+    g_Windowed = pp->Windowed;
+
     D3DPRESENT_PARAMETERS rp = *pp;
     D3DDEVICE_CREATION_PARAMETERS cp = {};
 
@@ -52,7 +54,7 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
     {
         SetWindowLongW(hwnd, GWL_USERDATA, pp->Windowed);
 
-        g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
+        g_Windowed = pp->Windowed, g_WndProc = (PVOID)SetWindowLongW(hwnd, GWL_WNDPROC, (LONG)WndProc);
         g_Child = CreateWindowExW(0, L" ", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
 
         SetWindowLongW(hwnd, GWL_EXSTYLE, WS_EX_APPWINDOW);

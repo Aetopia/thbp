@@ -5,6 +5,7 @@
 #include <winbase.h>
 
 HWND g_Child = {};
+BOOL g_Windowed = {};
 WNDPROC g_WndProc = {};
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
