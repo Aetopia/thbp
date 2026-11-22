@@ -33,12 +33,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     }
     case WM_SETCURSOR: {
-        if (GetWindowLongW(hWnd, GWL_USERDATA))
+        if (g_Windowed || hWnd != GetForegroundWindow())
             return DefWindowProcW(hWnd, uMsg, wParam, lParam);
-
-        if (hWnd != GetForegroundWindow())
-            return DefWindowProcW(hWnd, uMsg, wParam, lParam);
-
         return SetCursor(NULL), TRUE;
     }
     case WM_STYLECHANGING: {
@@ -51,7 +47,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         case GWL_STYLE: {
             ws->styleNew = (WS_VISIBLE & ws->styleNew) | WS_CLIPCHILDREN;
-            ws->styleNew |= GetWindowLongW(hWnd, GWL_USERDATA) ? WS_OVERLAPPEDWINDOW : WS_POPUP;
+            ws->styleNew |= g_Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP;
             break;
         }
         }
@@ -89,10 +85,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (~wp->flags & (SWP_NOMOVE | SWP_NOSIZE))
             wp->flags |= SWP_NOCOPYBITS;
 
-        if (GetWindowLongW(hWnd, GWL_USERDATA))
-            return 0;
-
-        if (!(~wp->flags & (SWP_NOMOVE | SWP_NOSIZE)))
+        if (g_Windowed || !(~wp->flags & (SWP_NOMOVE | SWP_NOSIZE)))
             return 0;
 
         RECT rc = {wp->x, wp->y, wp->x + wp->cx, wp->y + wp->cy};
