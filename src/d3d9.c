@@ -42,8 +42,8 @@ HRESULT WINAPI Present(LPDIRECT3DDEVICE9 this, PVOID src, PVOID dst, HWND hwnd, 
     return g_Present(this, &rc, NULL, g_Child, NULL);
 }
 
-HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd, DWORD flags,
-                            D3DPRESENT_PARAMETERS *pp, LPDIRECT3DDEVICE9 *device)
+HRESULT WINAPI CreateDevice(PVOID this, UINT idx, D3DDEVTYPE type, HWND hwnd, DWORD flags, D3DPRESENT_PARAMETERS *pp,
+                            LPDIRECT3DDEVICE9 *dev)
 {
     if (!IsWindow(g_Child))
     {
@@ -68,13 +68,20 @@ HRESULT WINAPI CreateDevice(PVOID this, UINT adapter, D3DDEVTYPE type, HWND hwnd
     cp.BackBufferCount = cp.FullScreen_RefreshRateInHz = 0;
     cp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    HRESULT hr = g_CreateDevice(this, adapter, type, hwnd, flags, &cp, device);
+    HRESULT hr = g_CreateDevice(this, idx, type, hwnd, flags, &cp, dev);
 
     if (SUCCEEDED(hr) && !g_Present && !g_Reset)
     {
-        g_Reset = CreateDetour((*device)->lpVtbl->Reset, Reset);
-        g_Present = CreateDetour((*device)->lpVtbl->Present, Present);
+        g_Reset = CreateDetour((*dev)->lpVtbl->Reset, Reset);
+        g_Present = CreateDetour((*dev)->lpVtbl->Present, Present);
     }
 
     return hr;
+}
+
+VOID D3D9_DllMain(VOID)
+{
+    LPDIRECT3D9 dx9 = Direct3DCreate9(D3D_SDK_VERSION);
+    g_CreateDevice = CreateDetour(dx9->lpVtbl->CreateDevice, CreateDevice);
+    dx9->lpVtbl->Release(dx9);
 }

@@ -1,65 +1,31 @@
 #include <dwmapi.h>
-#include <dinput.h>
-#include <dinputd.h>
 
 #include "d3d9.c"
+#include "hooks.c"
+#include "dinput8.c"
 
-HRESULT WINAPI (*g_SetCooperativeLevel)(PVOID, HWND, DWORD) = {};
-HRESULT WINAPI (*g_DirectInput8Create)(PVOID, DWORD, REFIID, PVOID, PVOID) = {};
-
-HRESULT WINAPI SetCooperativeLevel(PVOID this, HWND hwnd, DWORD flags)
+VOID MAIN_DllMain(VOID)
 {
-    flags &= ~DISCL_NOWINKEY;
-    return g_SetCooperativeLevel(this, hwnd, flags);
+    WNDCLASSW wc = {
+        .lpszClassName = L" ",
+        .lpfnWndProc = DefWindowProcW,
+        .hCursor = LoadCursorW(NULL, IDC_ARROW),
+        .hbrBackground = GetStockObject(BLACK_BRUSH),
+    };
+
+    RegisterClassW(&wc);
+    DwmEnableMMCSS(TRUE);
+
+    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 }
 
-__declspec(dllexport) HRESULT WINAPI DirectInput8Create(HINSTANCE instance, DWORD version, REFIID iid, PVOID *object,
-                                                        LPUNKNOWN unknown)
+BOOL WINAPI DllMain(PVOID lib, DWORD rsn, PVOID pv)
 {
-    return g_DirectInput8Create(instance, version, iid, object, unknown);
-}
-
-BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, PVOID reserved)
-{
-    if (reason == DLL_PROCESS_ATTACH)
+    if (rsn == DLL_PROCESS_ATTACH)
     {
-        DisableThreadLibraryCalls(instance);
-        SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-
-        RegisterClassW(&(WNDCLASSW){
-            .lpszClassName = L" ",
-            .lpfnWndProc = DefWindowProcW,
-            .hCursor = LoadCursorW(NULL, IDC_ARROW),
-            .hbrBackground = GetStockObject(BLACK_BRUSH),
-        });
-        DwmEnableMMCSS(TRUE);
-
-        WCHAR path[MAX_PATH] = {};
-        GetSystemDirectoryW(path, MAX_PATH);
-
-        HMODULE module = LoadLibraryW(lstrcatW(path, L"/DINPUT8"));
-        g_DirectInput8Create = (PVOID)GetProcAddress(module, "DirectInput8Create");
-
-        LPDIRECTINPUT8W dinput8 = {};
-        LPDIRECTINPUTDEVICE8W device = {};
-        LPDIRECT3D9 d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
-
-        DirectInput8Create(instance, DIRECTINPUT_VERSION, &IID_IDirectInput8W, (PVOID)&dinput8, NULL);
-        dinput8->lpVtbl->CreateDevice(dinput8, &GUID_SysMouseEm, &device, NULL);
-
-        CreateDetour(ShowCursor, $ShowCursor);
-        CreateDetour(EnableWindow, $EnableWindow);
-
-        g_Sleep = CreateDetour(Sleep, $Sleep);
-        g_EnumDisplaySettingsA = CreateDetour(EnumDisplaySettingsA, $EnumDisplaySettingsA);
-        g_EnumDisplaySettingsW = CreateDetour(EnumDisplaySettingsW, $EnumDisplaySettingsW);
-
-        g_CreateDevice = CreateDetour(d3d9->lpVtbl->CreateDevice, CreateDevice);
-        g_SetCooperativeLevel = CreateDetour(device->lpVtbl->SetCooperativeLevel, SetCooperativeLevel);
-
-        d3d9->lpVtbl->Release(d3d9);
-        device->lpVtbl->Release(device);
-        dinput8->lpVtbl->Release(dinput8);
+        DisableThreadLibraryCalls(lib);
+        MAIN_DllMain(), HOOKS_DllMain();
+        D3D9_DllMain(), DINPUT8_DllMain();
     }
     return TRUE;
 }

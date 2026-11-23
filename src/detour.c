@@ -1,53 +1,7 @@
 #pragma once
 
-#include <windef.h>
-#include <wingdi.h>
-#include <synchapi.h>
 #include <memoryapi.h>
 #include <processthreadsapi.h>
-
-VOID WINAPI (*g_Sleep)(DWORD) = {};
-BOOL WINAPI (*g_EnumDisplaySettingsW)(PVOID, DWORD, PVOID) = {};
-BOOL WINAPI (*g_EnumDisplaySettingsA)(PVOID, DWORD, PVOID) = {};
-
-INT WINAPI $ShowCursor(BOOL show)
-{
-    return show ? 0 : -1;
-}
-
-BOOL WINAPI $EnableWindow(HWND hwnd, BOOL enable)
-{
-    return TRUE;
-}
-
-VOID WINAPI $Sleep(DWORD interval)
-{
-    g_Sleep(interval ? 1 : 0);
-}
-
-BOOL WINAPI $EnumDisplaySettingsA(PVOID name, DWORD idx, PDEVMODEA dm)
-{
-    if (!g_EnumDisplaySettingsA(name, idx, dm))
-        return FALSE;
-
-    dm->dmPelsWidth = 1280;
-    dm->dmPelsHeight = 960;
-    dm->dmDisplayFrequency = 0;
-
-    return TRUE;
-}
-
-BOOL WINAPI $EnumDisplaySettingsW(PVOID name, DWORD idx, PDEVMODEW dm)
-{
-    if (!g_EnumDisplaySettingsW(name, idx, dm))
-        return FALSE;
-
-    dm->dmPelsWidth = 1280;
-    dm->dmPelsHeight = 960;
-    dm->dmDisplayFrequency = 0;
-
-    return TRUE;
-}
 
 PVOID CreateDetour(PVOID src, PVOID dst)
 {
