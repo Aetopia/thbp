@@ -82,9 +82,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         PWINDOWPOS wp = (PWINDOWPOS)lParam;
         MONITORINFO mi = {sizeof(MONITORINFO)};
 
-        if (~wp->flags & (SWP_NOMOVE | SWP_NOSIZE))
-            wp->flags |= SWP_NOCOPYBITS;
-
         if (g_Windowed || !(~wp->flags & (SWP_NOMOVE | SWP_NOSIZE)))
             return 0;
 
