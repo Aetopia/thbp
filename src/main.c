@@ -19,7 +19,7 @@ VOID MAIN_DllMain(VOID)
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 }
 
-BOOL WINAPI DllMain(PVOID lib, DWORD rsn, PVOID pv)
+BOOL WINAPI DllMain(HMODULE lib, DWORD rsn, PVOID pv)
 {
     if (rsn == DLL_PROCESS_ATTACH)
     {

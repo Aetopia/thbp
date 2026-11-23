@@ -1,4 +1,4 @@
-# Touhou Borderless Patch
+# Touhou Borderless Patch (thbp)
 
 Adds resizable window & borderless fullscreen support to Touhou games.
 
@@ -9,18 +9,18 @@ Adds resizable window & borderless fullscreen support to Touhou games.
 > - This list shows games that are confirmed to work.
 > - Feel free to test it with other games & report back!
 
-|Entry|Name|API|
-|:-|:-|:-|
-|9|Phantasmagoria of Flower View|D3D8|
-|9.5|Shoot the Bullet|D3D8|
-|10|Mountain of Faith|D3D9|
-|12|Undefined Fantastic Object|D3D9|
-|15|Legacy of Lunatic Kingdom|D3D9|
-|18|Unconnected Marketeers|D3D9|
-|20|Fossilized Wonders|D3D9|
+|Entry|Name|
+|:-|:-|
+|9|Phantasmagoria of Flower View|
+|9.5|Shoot the Bullet|
+|10|Mountain of Faith|
+|12|Undefined Fantastic Object|
+|15|Legacy of Lunatic Kingdom|
+|18|Unconnected Marketeers|
+|20|Fossilized Wonders|
 
 > [!CAUTION]
-> For games that use D3D8, please install [d3d8to9](https://github.com/crosire/d3d8to9/releases/latest).
+> For games prior to Touhou 10, please install [d3d8to9](https://github.com/crosire/d3d8to9/releases/latest).
 > - This will improve compatibility on modern systems.
 > - This will allow the patch to function with these games.
 
@@ -44,7 +44,7 @@ https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
 >
 > Use the highest available resolution when playing.
 
-- [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of `thbp`.
+- [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of thbp.
 - Locate a supported game on your system.
 - Place `dinput8.dll` in the game's install folder.
 
