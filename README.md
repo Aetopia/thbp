@@ -1,4 +1,4 @@
-# Touhou Borderless Patch (thbp)
+# Touhou Borderless Patch
 
 Adds resizable window & borderless fullscreen support to Touhou games.
 
@@ -44,7 +44,7 @@ https://github.com/user-attachments/assets/9d57d8a5-3f28-4521-9ebc-fdd175e5f498
 >
 > Use the highest available resolution when playing.
 
-- [Download](https://github.com/Aetopia/thbp/releases/latest) the latest release of thbp.
+- [Download](https://github.com/Aetopia/touhou-borderless-patch/releases/latest) the latest release of the patch.
 - Locate a supported game on your system.
 - Place `dinput8.dll` in the game's install folder.
 
